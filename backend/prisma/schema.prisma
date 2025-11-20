@@ -1,14 +1,138 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  LANDLORD
+  TENANT
+  ADMIN
+}
+
+enum LeaseStatus {
+  ACTIVE
+  TERMINATED
+  EXPIRED
+}
+
+enum MaintenanceStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+// Backend A: main user auth model
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  role      Role     @default(TENANT)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant     Tenant?
+  properties Property[] @relation("LandlordProperties")
+}
+
+// Backend A: tenant profile mapped to User
+model Tenant {
+  id        Int      @id @default(autoincrement())
+  phone     String?
+  userId    Int      @unique
+  createdAt DateTime @default(now())
+
+  // Relations
+  user   User    @relation(fields: [userId], references: [id])
+  leases Lease[]
+}
+
+// Backend B: properties owned by landlord
+model Property {
+  id          Int      @id @default(autoincrement())
+  title       String
+  address     String
+  city        String
+  province    String
+  postalCode  String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  landlordId Int
+  landlord   User   @relation("LandlordProperties", fields: [landlordId], references: [id])
+  units      Unit[]
+}
+
+// Backend B: individual rentable units
+model Unit {
+  id          Int      @id @default(autoincrement())
+  unitNumber  String
+  bedrooms    Int
+  bathrooms   Int
+  rentAmount  Float
+  isAvailable Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  propertyId Int
+  property   Property @relation(fields: [propertyId], references: [id])
+  leases     Lease[]
+}
+
+// Backend B: lease between tenant and unit
+model Lease {
+  id        Int         @id @default(autoincrement())
+  startDate DateTime
+  endDate   DateTime
+  status    LeaseStatus @default(ACTIVE)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  unitId Int
+  unit   Unit @relation(fields: [unitId], references: [id])
+
+  tenantId Int
+  tenant   Tenant @relation(fields: [tenantId], references: [id])
+
+  payments            Payment[]
+  maintenanceRequests MaintenanceRequest[]
+}
+
+// FINAL Payment model (Stripe-ready)
+model Payment {
+  id        Int           @id @default(autoincrement())
+  leaseId   Int
+  amount    Float
+  status    PaymentStatus @default(PENDING)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  lease Lease @relation(fields: [leaseId], references: [id])
+}
+
+// Backend B: maintenance requests
+model MaintenanceRequest {
+  id          Int               @id @default(autoincrement())
+  title       String
+  description String?
+  status      MaintenanceStatus @default(PENDING)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  leaseId Int
+  lease   Lease @relation(fields: [leaseId], references: [id])
 }
