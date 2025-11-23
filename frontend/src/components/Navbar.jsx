@@ -1,40 +1,52 @@
-import { Link, useNavigate } from "react-router-dom";
+// src/components/Navbar.jsx
+import { NavLink } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+
+const navLinkStyle = ({ isActive }) => ({
+  marginRight: "1rem",
+  fontSize: "0.95rem",
+  textDecoration: "none",
+  color: isActive ? "#4fd1c5" : "#e5e7eb",
+  borderBottom: isActive ? "2px solid #4fd1c5" : "2px solid transparent",
+  paddingBottom: "0.2rem",
+});
 
 export default function Navbar() {
-  const navigate = useNavigate();
-
-  const logout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
+  const { user, logout } = useAuth();
 
   return (
-    <nav className="bg-[#111214] text-white px-6 py-4 shadow-md">
-      <div className="max-w-6xl mx-auto flex items-center justify-between">
-        <h1 className="text-lg font-bold">Property Manager</h1>
+    <header className="navbar">
+      <div className="navbar-left">
+        <span className="brand">Property Manager</span>
+        {user && (
+          <nav>
+            <NavLink to="/dashboard" style={navLinkStyle}>
+              Home
+            </NavLink>
+            <NavLink to="/properties" style={navLinkStyle}>
+              Properties
+            </NavLink>
+            <NavLink to="/units" style={navLinkStyle}>
+              Units
+            </NavLink>
+            <NavLink to="/payments" style={navLinkStyle}>
+              Payments
+            </NavLink>
+            <NavLink to="/maintenance" style={navLinkStyle}>
+              Maintenance
+            </NavLink>
+          </nav>
+        )}
+      </div>
 
-        <div className="flex gap-6 text-sm">
-          <Link to="/dashboard" className="hover:text-blue-400">
-            Home
-          </Link>
-          <Link to="/properties" className="hover:text-blue-400">
-            Properties
-          </Link>
-          <Link to="/units" className="hover:text-blue-400">
-            Units
-          </Link>
-          <Link to="/payments" className="hover:text-blue-400">
-            Payments
-          </Link>
-
-          <button
-            onClick={logout}
-            className="ml-4 bg-red-500 hover:bg-red-600 px-3 py-1 rounded"
-          >
+      {user && (
+        <div className="navbar-right">
+          <span className="navbar-user">{user.email}</span>
+          <button className="btn-outline" onClick={logout}>
             Logout
           </button>
         </div>
-      </div>
-    </nav>
+      )}
+    </header>
   );
 }

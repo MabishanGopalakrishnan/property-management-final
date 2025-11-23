@@ -1,29 +1,87 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Register from "./pages/Register";
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
+// src/App.jsx
+import { Routes, Route, Navigate } from "react-router-dom";
+import { useAuth } from "./context/AuthContext.jsx";
 
-// Protected layout
-import DashboardLayout from "./layouts/DashboardLayout";
+import Login from "./pages/Login.jsx";
+import Register from "./pages/Register.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
+import Properties from "./pages/Properties.jsx";
+import Units from "./pages/Units.jsx";
+import Payments from "./pages/Payments.jsx";
+import Maintenance from "./pages/Maintenance.jsx";
+import NotFound from "./pages/NotFound.jsx";
+
+function PrivateRoute({ children }) {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="center-page">
+        <div className="loader" />
+        <p>Checking session...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+}
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
+    <Routes>
+      {/* Public */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
 
-        {/* Public Routes */}
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
+      {/* Protected */}
+      <Route
+        path="/dashboard"
+        element={
+          <PrivateRoute>
+            <Dashboard />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/properties"
+        element={
+          <PrivateRoute>
+            <Properties />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/units"
+        element={
+          <PrivateRoute>
+            <Units />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/payments"
+        element={
+          <PrivateRoute>
+            <Payments />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/maintenance"
+        element={
+          <PrivateRoute>
+            <Maintenance />
+          </PrivateRoute>
+        }
+      />
 
-        {/* Protected Dashboard */}
-        <Route element={<DashboardLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/properties" element={<div>Properties Page</div>} />
-          <Route path="/units" element={<div>Units Page</div>} />
-          <Route path="/payments" element={<div>Payments Page</div>} />
-        </Route>
-
-      </Routes>
-    </BrowserRouter>
+      {/* Default routes */}
+      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 }

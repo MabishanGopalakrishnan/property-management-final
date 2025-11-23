@@ -4,48 +4,54 @@ import morgan from "morgan";
 import helmet from "helmet";
 import dotenv from "dotenv";
 
-// Routes
 import propertyRoutes from "./routes/propertyRoutes.js";
 import unitRoutes from "./routes/unitRoutes.js";
 import leaseRoutes from "./routes/leaseRoutes.js";
 import maintenanceRoutes from "./routes/maintenanceRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
+import paymentHistoryRoutes from "./routes/paymentHistoryRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import webhookRoutes from "./routes/webhookRoutes.js";
-import paymentHistoryRoutes from "./routes/paymentHistoryRoutes.js";
-
 
 dotenv.config();
 
 const app = express();
 
-// --------------------------
-// 1. WEBHOOK ROUTE RAW BODY
-// --------------------------
-app.use("/api/webhooks", webhookRoutes);
-
-// --------------------------
-// 2. NORMAL MIDDLEWARE
-// --------------------------
-app.use(express.json());  // After webhook!
 app.use(cors());
-app.use(morgan("dev"));
 app.use(helmet());
+app.use(morgan("dev"));
 
-// --------------------------
-// 3. API ROUTES
-// --------------------------
-app.use("/api/properties", propertyRoutes);
-app.use("/api/units", unitRoutes);
-app.use("/api/leases", leaseRoutes);
-app.use("/api/maintenance", maintenanceRoutes);
-app.use("/api/payments", paymentRoutes);
-app.use("/api/auth", authRoutes);
-app.use("/api/payment-history", paymentHistoryRoutes);
+// Stripe webhooks need raw body on that route only
+app.use("/webhooks", webhookRoutes);
 
-// Health check
-app.get("/", (req, res) => {
-  res.json({ message: "Backend API is running..." });
+app.use(express.json());
+
+app.get("/health", (req, res) => res.json({ status: "ok" }));
+
+// Routes
+app.use("/auth", authRoutes);
+
+// DEV B
+app.use("/properties", propertyRoutes);
+app.use("/units", unitRoutes);
+app.use("/leases", leaseRoutes);
+app.use("/maintenance", maintenanceRoutes);
+
+// DEV A
+app.use("/payments", paymentRoutes);
+app.use("/payment-history", paymentHistoryRoutes);
+
+// 404
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
+});
+
+// error handler
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(err.status || 500).json({
+    message: err.message || "Internal Server Error"
+  });
 });
 
 export default app;
