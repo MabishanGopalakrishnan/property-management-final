@@ -35,72 +35,64 @@ enum PaymentStatus {
   FAILED
 }
 
-// Backend A: main user auth model
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
+  id        Int    @id @default(autoincrement())
+  name      String
+  email     String @unique
   password  String
-  role      Role     @default(TENANT)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  role      Role   @default(TENANT)
 
   tenant     Tenant?
-  properties Property[] @relation("LandlordProperties")
+  properties Property[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-// Backend A: tenant profile mapped to User
 model Tenant {
-  id        Int      @id @default(autoincrement())
-  phone     String?
-  userId    Int      @unique
-  createdAt DateTime @default(now())
+  id     Int    @id @default(autoincrement())
+  phone  String?
 
-  // Relations
-  user   User    @relation(fields: [userId], references: [id])
+  userId Int  @unique
+  user   User @relation(fields: [userId], references: [id])
+
   leases Lease[]
 }
 
-// Backend B: properties owned by landlord
 model Property {
-  id          Int      @id @default(autoincrement())
-  title       String
-  address     String
-  city        String
-  province    String
-  postalCode  String
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        Int    @id @default(autoincrement())
+  name      String?
+  address   String
+  city      String
 
-  landlordId Int
-  landlord   User   @relation("LandlordProperties", fields: [landlordId], references: [id])
-  units      Unit[]
+  ownerId Int
+  owner   User @relation(fields: [ownerId], references: [id])
+
+  units Unit[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-// Backend B: individual rentable units
 model Unit {
-  id          Int      @id @default(autoincrement())
-  unitNumber  String
-  bedrooms    Int
-  bathrooms   Int
-  rentAmount  Float
-  isAvailable Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         Int    @id @default(autoincrement())
+  unitNumber String
 
   propertyId Int
   property   Property @relation(fields: [propertyId], references: [id])
-  leases     Lease[]
+
+  leases Lease[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-// Backend B: lease between tenant and unit
 model Lease {
   id        Int         @id @default(autoincrement())
+  rent      Float
   startDate DateTime
   endDate   DateTime
   status    LeaseStatus @default(ACTIVE)
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
 
   unitId Int
   unit   Unit @relation(fields: [unitId], references: [id])
@@ -108,31 +100,36 @@ model Lease {
   tenantId Int
   tenant   Tenant @relation(fields: [tenantId], references: [id])
 
-  payments            Payment[]
-  maintenanceRequests MaintenanceRequest[]
+  payments Payment[]
+  requests MaintenanceRequest[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-// FINAL Payment model (Stripe-ready)
 model Payment {
   id        Int           @id @default(autoincrement())
-  leaseId   Int
   amount    Float
   status    PaymentStatus @default(PENDING)
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  paidAt    DateTime?
+  stripePaymentIntentId String?
 
-  lease Lease @relation(fields: [leaseId], references: [id])
+  leaseId Int
+  lease   Lease @relation(fields: [leaseId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-// Backend B: maintenance requests
 model MaintenanceRequest {
   id          Int               @id @default(autoincrement())
   title       String
   description String?
   status      MaintenanceStatus @default(PENDING)
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
 
   leaseId Int
   lease   Lease @relation(fields: [leaseId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

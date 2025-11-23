@@ -154,3 +154,21 @@ export const stripeWebhook = async (req, res) => {
     res.status(400).send(`Webhook Error: ${err.message}`);
   }
 };
+
+
+
+
+// import { createPaymentIntentService } from "../services/paymentService.js";
+
+// export const createIntent = async (req, res, next) => {
+//   try {
+//     const { leaseId, amount } = req.body;
+//     if (!leaseId || !amount)
+//       return res.status(400).json({ message: "leaseId and amount required" });
+
+//     const result = await createPaymentIntentService({ leaseId, amount });
+//     res.json(result);
+//   } catch (err) {
+//     next(err);
+//   }
+// };
