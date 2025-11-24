@@ -6,18 +6,21 @@ import { useAuth } from "../context/AuthContext";
 export default function Register() {
   const { register } = useAuth();
   const navigate = useNavigate();
+
   const [form, setForm] = useState({
+    name: "",
     email: "",
     password: "",
     role: "LANDLORD",
     phone: "",
   });
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
   const handleChange = (e) => {
-    setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e) => {
@@ -25,15 +28,14 @@ export default function Register() {
     setError("");
     setSuccess("");
     setLoading(true);
+
     try {
       await register(form);
-      setSuccess("Account created! You can now log in.");
-      setTimeout(() => navigate("/login"), 1200);
+      setSuccess("Account created! Redirecting to login...");
+      setTimeout(() => navigate("/login"), 1500);
     } catch (err) {
       console.error(err);
-      setError(
-        err?.response?.data?.error || "Registration failed. Try again."
-      );
+      setError(err?.response?.data?.error || "Registration failed.");
     } finally {
       setLoading(false);
     }
@@ -42,16 +44,30 @@ export default function Register() {
   return (
     <div className="auth-page">
       <div className="auth-card">
-        <h1 className="auth-title">Create account</h1>
+        <h1 className="auth-title">Create Account</h1>
         <p className="auth-subtitle">
-          Landlords can manage properties; tenants can submit maintenance and
-          view payments.
+          Landlords manage properties; tenants receive access to their unit,
+          payments, and maintenance requests.
         </p>
 
         {error && <div className="alert error">{error}</div>}
         {success && <div className="alert success">{success}</div>}
 
         <form onSubmit={handleSubmit} className="auth-form">
+
+          {/* NAME FIELD */}
+          <label className="field-label">Full Name</label>
+          <input
+            className="input"
+            type="text"
+            name="name"
+            placeholder="John Doe"
+            value={form.name}
+            onChange={handleChange}
+            required
+          />
+
+          {/* EMAIL */}
           <label className="field-label">Email</label>
           <input
             className="input"
@@ -62,6 +78,7 @@ export default function Register() {
             required
           />
 
+          {/* PASSWORD */}
           <label className="field-label">Password</label>
           <input
             className="input"
@@ -72,6 +89,7 @@ export default function Register() {
             required
           />
 
+          {/* ROLE */}
           <label className="field-label">Role</label>
           <select
             className="input"
@@ -83,6 +101,7 @@ export default function Register() {
             <option value="TENANT">Tenant</option>
           </select>
 
+          {/* TENANT PHONE */}
           {form.role === "TENANT" && (
             <>
               <label className="field-label">Phone (optional)</label>
@@ -90,6 +109,7 @@ export default function Register() {
                 className="input"
                 type="tel"
                 name="phone"
+                placeholder="647-123-4567"
                 value={form.phone}
                 onChange={handleChange}
               />

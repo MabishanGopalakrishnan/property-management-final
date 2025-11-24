@@ -15,7 +15,7 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // On first load, try to restore session
+  // Restore session on first load
   useEffect(() => {
     const restore = async () => {
       const token = localStorage.getItem("token");
@@ -36,6 +36,7 @@ export function AuthProvider({ children }) {
     restore();
   }, []);
 
+  // LOGIN
   const login = async (email, password) => {
     const { token, user } = await loginRequest({ email, password });
     localStorage.setItem("token", token);
@@ -43,12 +44,18 @@ export function AuthProvider({ children }) {
     navigate("/dashboard");
   };
 
-  const register = async (data) => {
-    const user = await registerRequest(data);
-    // Optional: auto-login: call login(data.email, data.password)
-    return user;
+  // REGISTER — now includes NAME properly
+  const register = async ({ name, email, password, role, phone }) => {
+    return await registerRequest({
+      name,
+      email,
+      password,
+      role,
+      phone,
+    });
   };
 
+  // LOGOUT
   const logout = () => {
     localStorage.removeItem("token");
     setUser(null);
