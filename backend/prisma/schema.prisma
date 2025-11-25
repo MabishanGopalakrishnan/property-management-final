@@ -1,0 +1,135 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  LANDLORD
+  TENANT
+  ADMIN
+}
+
+enum LeaseStatus {
+  ACTIVE
+  TERMINATED
+  EXPIRED
+}
+
+enum MaintenanceStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+model User {
+  id        Int    @id @default(autoincrement())
+  name      String
+  email     String @unique
+  password  String
+  role      Role   @default(TENANT)
+
+  tenant     Tenant?
+  properties Property[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Tenant {
+  id     Int    @id @default(autoincrement())
+  phone  String?
+
+  userId Int  @unique
+  user   User @relation(fields: [userId], references: [id])
+
+  leases Lease[]
+}
+
+model Property {
+  id        Int    @id @default(autoincrement())
+  name      String?
+  address   String
+  city      String
+
+  ownerId Int
+  owner   User @relation(fields: [ownerId], references: [id])
+
+  units Unit[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Unit {
+  id         Int    @id @default(autoincrement())
+  unitNumber String
+
+  propertyId Int
+  property   Property @relation(fields: [propertyId], references: [id])
+
+  leases Lease[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Lease {
+  id        Int         @id @default(autoincrement())
+  rent      Float
+  startDate DateTime
+  endDate   DateTime
+  status    LeaseStatus @default(ACTIVE)
+
+  unitId Int
+  unit   Unit @relation(fields: [unitId], references: [id])
+
+  tenantId Int
+  tenant   Tenant @relation(fields: [tenantId], references: [id])
+
+  payments Payment[]
+  requests MaintenanceRequest[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Payment {
+  id        Int           @id @default(autoincrement())
+  amount    Float
+  status    PaymentStatus @default(PENDING)
+  paidAt    DateTime?
+  stripePaymentIntentId String?
+
+  leaseId Int
+  lease   Lease @relation(fields: [leaseId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MaintenanceRequest {
+  id          Int               @id @default(autoincrement())
+  title       String
+  description String?
+  status      MaintenanceStatus @default(PENDING)
+
+  leaseId Int
+  lease   Lease @relation(fields: [leaseId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
