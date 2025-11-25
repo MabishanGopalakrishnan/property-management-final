@@ -1,79 +1,71 @@
-// src/pages/Login.jsx
+// frontend/src/pages/Login.jsx
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useNavigate, Link } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
+import API from "../api/axiosConfig.js";
+import { useAuth } from "../context/AuthContext.jsx";
 
 export default function Login() {
+  const navigate = useNavigate();
   const { login } = useAuth();
-  const [form, setForm] = useState({ email: "", password: "" });
-  const [loading, setLoading] = useState(false);
+
+  const [role, setRole] = useState("LANDLORD");
   const [error, setError] = useState("");
 
-  const handleChange = (e) => {
-    setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+  const handleGoogleSuccess = async (credentialResponse) => {
     try {
-      await login(form.email, form.password);
+      setError("");
+
+      const idToken = credentialResponse.credential;
+
+      const res = await API.post("/auth/google", {
+        idToken,
+        role, // LANDLORD or TENANT
+      });
+
+      // res.data should be { user, token }
+      login(res.data.token, res.data.user);
+
+      navigate("/dashboard");
     } catch (err) {
-      console.error(err);
-      setError(
-        err?.response?.data?.error || "Login failed. Check your credentials."
-      );
-    } finally {
-      setLoading(false);
+      console.log("GOOGLE LOGIN ERROR:", err.response?.data || err.message);
+      setError(err.response?.data?.message || "Google login failed.");
     }
   };
 
+  const handleGoogleError = () => {
+    setError("Google login failed.");
+  };
+
   return (
-    <div className="auth-page">
-      <div className="auth-card">
-        <h1 className="auth-title">Login</h1>
-        <p className="auth-subtitle">
-          Sign in to manage properties, tenants, and payments.
-        </p>
+    <div style={{ maxWidth: 420, margin: "60px auto" }}>
+      <h1>Login</h1>
 
-        {error && <div className="alert error">{error}</div>}
+      {error && (
+        <div style={{ color: "red", marginBottom: 12 }}>
+          {error}
+        </div>
+      )}
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          <label className="field-label">Email</label>
-          <input
-            className="input"
-            type="email"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-            placeholder="you@example.com"
-            required
-          />
+      <label>Login as</label>
+      <select
+        value={role}
+        onChange={(e) => setRole(e.target.value)}
+        style={{ width: "100%", marginBottom: 20 }}
+      >
+        <option value="LANDLORD">Landlord</option>
+        <option value="TENANT">Tenant</option>
+      </select>
 
-          <label className="field-label">Password</label>
-          <input
-            className="input"
-            type="password"
-            name="password"
-            value={form.password}
-            onChange={handleChange}
-            placeholder="••••••••"
-            required
-          />
+      <GoogleLogin
+        onSuccess={handleGoogleSuccess}
+        onError={handleGoogleError}
+        useOneTap
+      />
 
-          <button className="btn-primary" type="submit" disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
-          </button>
-        </form>
-
-        <p className="auth-footer">
-          Don&apos;t have an account?{" "}
-          <Link to="/register" className="link">
-            Register
-          </Link>
-        </p>
-      </div>
+      <p style={{ marginTop: 16 }}>
+        Need an account? <Link to="/register">Register</Link>
+      </p>
     </div>
   );
 }

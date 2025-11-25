@@ -1,6 +1,7 @@
 // src/components/Navbar.jsx
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { googleLogout } from "@react-oauth/google";
 
 const navLinkStyle = ({ isActive }) => ({
   marginRight: "1rem",
@@ -12,12 +13,21 @@ const navLinkStyle = ({ isActive }) => ({
 });
 
 export default function Navbar() {
-  const { user, logout } = useAuth();
+  const { user, logout: appLogout } = useAuth();
+
+  const handleLogout = () => {
+    // Clear Google session
+    googleLogout();
+
+    // Clear app JWT + context
+    appLogout();
+  };
 
   return (
     <header className="navbar">
       <div className="navbar-left">
         <span className="brand">Property Manager</span>
+
         {user && (
           <nav>
             <NavLink to="/dashboard" style={navLinkStyle}>
@@ -42,7 +52,7 @@ export default function Navbar() {
       {user && (
         <div className="navbar-right">
           <span className="navbar-user">{user.email}</span>
-          <button className="btn-outline" onClick={logout}>
+          <button className="btn-outline" onClick={handleLogout}>
             Logout
           </button>
         </div>
