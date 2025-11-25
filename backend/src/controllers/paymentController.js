@@ -1,174 +1,81 @@
-import Stripe from "stripe";
-import prisma from "../prisma/client.js";
+// backend/src/controllers/paymentController.js
+import {
+  getTenantPayments,
+  getLandlordPaymentsService,
+  getLeasePaymentsService,
+  markPaymentPaidService,
+  getLandlordPaymentSummaryService,
+  getLandlordPaymentChartService,
+} from "../services/paymentService.js";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-
-// -------------------------
-// 1. CREATE PAYMENT INTENT
-// -------------------------
-export const createPaymentIntent = async (req, res) => {
+// GET /api/payments/mine
+export const getMyPayments = async (req, res) => {
   try {
-    const { leaseId, amount } = req.body;
-
-    // Ensure lease exists
-    const lease = await prisma.lease.findUnique({ where: { id: leaseId } });
-    if (!lease) return res.status(404).json({ error: "Lease not found" });
-
-    // Create PENDING payment entry in DB
-    const payment = await prisma.payment.create({
-      data: {
-        leaseId,
-        amount,
-        status: "PENDING",
-      },
-    });
-
-    // Create Stripe payment intent (metadata VERY IMPORTANT)
-    const intent = await stripe.paymentIntents.create({
-      amount: Math.round(amount * 100), // cents
-      currency: "cad",
-      metadata: {
-        leaseId: leaseId.toString(),
-        paymentId: payment.id.toString(),
-      },
-    });
-
-    res.json({
-      clientSecret: intent.client_secret,
-      paymentId: payment.id,
-    });
-
-  } catch (err) {
-    console.error("Error creating payment intent:", err.message);
-    res.status(500).json({ error: err.message });
-  }
-};
-
-// -------------------------
-// 2. GET PAYMENTS BY LEASE
-// -------------------------
-export const getPaymentsByLease = async (req, res) => {
-  try {
-    const leaseId = Number(req.params.leaseId);
-
-    const payments = await prisma.payment.findMany({
-      where: { leaseId },
-      orderBy: { createdAt: "desc" },
-    });
-
+    const userId = req.user.id;
+    const payments = await getTenantPayments(userId);
     res.json(payments);
   } catch (err) {
-    console.error("Get Payments Error:", err.message);
-    res.status(500).json({ error: err.message });
+    console.error("getMyPayments error:", err);
+    res.status(500).json({ message: "Failed to fetch payments" });
   }
 };
 
-// -------------------------
-// 3. UPDATE PAYMENT STATUS (Optional Admin Tool)
-// -------------------------
-export const updatePaymentStatus = async (req, res) => {
+// GET /api/payments/landlord
+export const getLandlordPayments = async (req, res) => {
   try {
-    const id = Number(req.params.id);
-    const { status } = req.body;
+    const landlordId = req.user.id;
+    const payments = await getLandlordPaymentsService(landlordId);
+    res.json(payments);
+  } catch (err) {
+    console.error("getLandlordPayments error:", err);
+    res.status(500).json({ message: "Failed to fetch landlord payments" });
+  }
+};
 
-    const updated = await prisma.payment.update({
-      where: { id },
-      data: { status },
-    });
+// GET /api/payments/lease/:leaseId
+export const getLeasePayments = async (req, res) => {
+  try {
+    const leaseId = req.params.leaseId;
+    const payments = await getLeasePaymentsService(leaseId);
+    res.json(payments);
+  } catch (err) {
+    console.error("getLeasePayments error:", err);
+    res.status(500).json({ message: "Failed to fetch lease payments" });
+  }
+};
 
+// POST /api/payments/:paymentId/pay
+export const payPayment = async (req, res) => {
+  try {
+    const paymentId = req.params.paymentId;
+    const updated = await markPaymentPaidService(paymentId);
     res.json(updated);
   } catch (err) {
-    console.error("Payment Update Error:", err.message);
-    res.status(500).json({ error: err.message });
+    console.error("payPayment error:", err);
+    res.status(500).json({ message: "Failed to mark payment as paid" });
   }
 };
 
-// -------------------------
-// 4. STRIPE WEBHOOK HANDLER
-// -------------------------
-export const stripeWebhook = async (req, res) => {
+// GET /api/payments/landlord/summary
+export const getLandlordPaymentSummary = async (req, res) => {
   try {
-    const sig = req.headers["stripe-signature"];
-
-    const event = stripe.webhooks.constructEvent(
-      req.body, // RAW BODY REQUIRED
-      sig,
-      process.env.STRIPE_WEBHOOK_SECRET
-    );
-
-    console.log("🔔 Stripe Event Received:", event.type);
-
-    // -------------------------
-    // SUCCESSFUL PAYMENT
-    // -------------------------
-    if (event.type === "payment_intent.succeeded") {
-      const pi = event.data.object;
-
-      // Some test Stripe events DO NOT include metadata
-      if (!pi.metadata || !pi.metadata.paymentId) {
-        console.log("⚠️ Skipping test event (no metadata)");
-        return res.json({ received: true });
-      }
-
-      const paymentId = Number(pi.metadata.paymentId);
-
-      await prisma.payment.update({
-        where: { id: paymentId },
-        data: {
-          status: "PAID",
-          datePaid: new Date(),
-        },
-      });
-
-      console.log(`💰 Payment ${paymentId} marked as PAID`);
-    }
-
-    // -------------------------
-    // FAILED PAYMENT
-    // -------------------------
-    if (event.type === "payment_intent.payment_failed") {
-      const pi = event.data.object;
-
-      if (!pi.metadata || !pi.metadata.paymentId) {
-        console.log("⚠️ Skipping test event (no metadata)");
-        return res.json({ received: true });
-      }
-
-      const paymentId = Number(pi.metadata.paymentId);
-
-      await prisma.payment.update({
-        where: { id: paymentId },
-        data: {
-          status: "FAILED",
-        },
-      });
-
-      console.log(`❌ Payment ${paymentId} marked FAILED`);
-    }
-
-    // ACKNOWLEDGE RECEIPT
-    res.json({ received: true });
-
+    const landlordId = req.user.id;
+    const summary = await getLandlordPaymentSummaryService(landlordId);
+    res.json(summary);
   } catch (err) {
-    console.error("❌ Webhook Error:", err.message);
-    res.status(400).send(`Webhook Error: ${err.message}`);
+    console.error("getLandlordPaymentSummary error:", err);
+    res.status(500).json({ message: "Failed to fetch payment summary" });
   }
 };
 
-
-
-
-// import { createPaymentIntentService } from "../services/paymentService.js";
-
-// export const createIntent = async (req, res, next) => {
-//   try {
-//     const { leaseId, amount } = req.body;
-//     if (!leaseId || !amount)
-//       return res.status(400).json({ message: "leaseId and amount required" });
-
-//     const result = await createPaymentIntentService({ leaseId, amount });
-//     res.json(result);
-//   } catch (err) {
-//     next(err);
-//   }
-// };
+// GET /api/payments/landlord/chart
+export const getLandlordPaymentChart = async (req, res) => {
+  try {
+    const landlordId = req.user.id;
+    const chartData = await getLandlordPaymentChartService(landlordId);
+    res.json(chartData);
+  } catch (err) {
+    console.error("getLandlordPaymentChart error:", err);
+    res.status(500).json({ message: "Failed to fetch chart data" });
+  }
+};

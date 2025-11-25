@@ -1,37 +1,12 @@
-// import express from "express";
-// import {
-//   createUnit,
-//   getUnitsByProperty,
-//   updateUnit,
-//   deleteUnit
-// } from "../controllers/unitController.js";
-
-// const router = express.Router();
-
-// // CREATE a unit under a property
-// router.post("/:propertyId", createUnit);
-
-// // GET all units for one property
-// router.get("/property/:propertyId", getUnitsByProperty);
-
-// // UPDATE unit
-// router.put("/:id", updateUnit);
-
-// // DELETE unit
-// router.delete("/:id", deleteUnit);
-
-// export default router;
-
-
+// backend/src/routes/unitRoutes.js
 import express from "express";
 import {
   createUnit,
   listUnits,
   updateUnit,
-  deleteUnit
+  deleteUnit,
 } from "../controllers/unitController.js";
-import { authRequired } from "../middleware/authMiddleware.js";
-import { requireRole } from "../middleware/roleMiddleware.js";
+import { authRequired, requireRole } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 

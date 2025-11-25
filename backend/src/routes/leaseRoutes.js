@@ -1,3 +1,4 @@
+// backend/src/routes/leaseRoutes.js
 import express from "express";
 import {
   createLease,
@@ -5,27 +6,28 @@ import {
   getLeasesByUnit,
   getLeaseById,
   updateLease,
-  deleteLease
+  deleteLease,
 } from "../controllers/leaseController.js";
+import { authRequired } from "../middleware/authMiddleware.js";
+import { requireRole } from "../middleware/roleMiddleware.js";
 
 const router = express.Router();
 
-// Create lease (tenant → unit)
+// Only landlords manage leases (for now)
+router.use(authRequired, requireRole("LANDLORD"));
+
+// Create lease
 router.post("/", createLease);
 
-// Get all leases for a property (via units)
+// Get all leases for a property (via its units)
 router.get("/property/:propertyId", getLeasesByProperty);
 
 // Get all leases for a unit
 router.get("/unit/:unitId", getLeasesByUnit);
 
-// Get lease by ID
+// Single lease
 router.get("/:id", getLeaseById);
-
-// Update lease
 router.put("/:id", updateLease);
-
-// Delete lease
 router.delete("/:id", deleteLease);
 
 export default router;

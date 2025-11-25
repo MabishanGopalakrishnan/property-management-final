@@ -1,22 +1,25 @@
+// backend/src/routes/propertyRoutes.js
+
 import express from "express";
 import {
   createProperty,
-  getAllProperties,
-  getPropertyById,
+  deleteProperty,
+  listProperties,
   updateProperty,
-  deleteProperty
+  getPropertyById,
 } from "../controllers/propertyController.js";
-import { authRequired } from "../middleware/authMiddleware.js";
-import { requireRole } from "../middleware/roleMiddleware.js";
+
+import { authRequired, requireRole } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
+// Only property managers (LANDLORD role) can manage properties
 router.use(authRequired, requireRole("LANDLORD"));
 
+router.get("/", listProperties);
 router.post("/", createProperty);
-router.get("/", getAllProperties);
-router.get("/:id", getPropertyById);
-router.put("/:id", updateProperty);
-router.delete("/:id", deleteProperty);
+router.get("/:propertyId", getPropertyById);
+router.put("/:propertyId", updateProperty);
+router.delete("/:propertyId", deleteProperty);
 
 export default router;

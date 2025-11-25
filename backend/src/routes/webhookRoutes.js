@@ -1,3 +1,4 @@
+// backend/src/routes/webhookRoutes.js
 import express from "express";
 import Stripe from "stripe";
 import prisma from "../prisma/client.js";
@@ -5,7 +6,7 @@ import prisma from "../prisma/client.js";
 const router = express.Router();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-// raw body required
+// Stripe requires the raw body for signature verification
 router.post(
   "/stripe",
   express.raw({ type: "application/json" }),
@@ -26,11 +27,10 @@ router.post(
 
     if (event.type === "payment_intent.succeeded") {
       const intent = event.data.object;
-      const leaseId = intent.metadata.leaseId;
 
       await prisma.payment.updateMany({
         where: { stripePaymentIntentId: intent.id },
-        data: { status: "PAID", paidAt: new Date() }
+        data: { status: "PAID", paidAt: new Date() },
       });
     }
 

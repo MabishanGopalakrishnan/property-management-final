@@ -13,6 +13,7 @@ import paymentRoutes from "./src/routes/paymentRoutes.js";
 import authRoutes from "./src/routes/authRoutes.js";
 // if you have webhook routes, keep this, otherwise you can comment it out:
 import webhookRoutes from "./src/routes/webhookRoutes.js";
+import tenantRoutes from "./src/routes/tenantRoutes.js";
 
 dotenv.config();
 
@@ -38,6 +39,7 @@ app.use("/api/units", unitRoutes);
 app.use("/api/leases", leaseRoutes);
 app.use("/api/maintenance", maintenanceRoutes);
 app.use("/api/payments", paymentRoutes);
+app.use("/api/tenants", tenantRoutes);
 
 // Health check
 app.get("/", (req, res) => {

@@ -1,53 +1,34 @@
-// import express from "express";
-// import {
-//   createMaintenanceRequest,
-//   getMaintenanceRequests,
-//   updateMaintenanceStatus
-// } from "../controllers/maintenanceController.js";
-
-// const router = express.Router();
-
-// // Tenants create maintenance requests (for a lease)
-// router.post("/:leaseId", createMaintenanceRequest);
-
-// // Landlord gets all maintenance requests
-// router.get("/", getMaintenanceRequests);
-
-// // Landlord updates maintenance status
-// router.put("/:id", updateMaintenanceStatus);
-
-// export default router;
 import express from "express";
-import {
-  createMaintenanceRequest,
-  getMaintenanceRequests,
-  updateMaintenanceStatus
-} from "../controllers/maintenanceController.js";
-
 import { authRequired } from "../middleware/authMiddleware.js";
+import { requireRole } from "../middleware/roleMiddleware.js";
+import {
+  getAllMaintenanceRequests,
+  getMaintenanceRequestById,
+  updateMaintenanceRequest,
+  uploadMaintenancePhoto,
+} from "../controllers/maintenanceController.js";
+import { maintenanceUpload } from "../middleware/upload.js";
 
 const router = express.Router();
+
+// Property Manager (LANDLORD in your roles)
 router.use(authRequired);
+router.use(requireRole("LANDLORD"));
 
-// TENANT submits maintenance request for their lease
-router.post("/lease/:leaseId", (req, res, next) => {
-  if (req.user.role !== "TENANT")
-    return res.status(403).json({ message: "Tenant only" });
-  next();
-}, createMaintenanceRequest);
+// List all requests
+router.get("/", getAllMaintenanceRequests);
 
-// LANDLORD lists all maintenance requests
-router.get("/", (req, res, next) => {
-  if (req.user.role !== "LANDLORD")
-    return res.status(403).json({ message: "Landlord only" });
-  next();
-}, getMaintenanceRequests);
+// Get one
+router.get("/:id", getMaintenanceRequestById);
 
-// LANDLORD updates maintenance status
-router.put("/:id", (req, res, next) => {
-  if (req.user.role !== "LANDLORD")
-    return res.status(403).json({ message: "Landlord only" });
-  next();
-}, updateMaintenanceStatus);
+// Update
+router.put("/:id", updateMaintenanceRequest);
+
+// Upload photos
+router.post(
+  "/:id/photo",
+  maintenanceUpload.single("photo"),
+  uploadMaintenancePhoto
+);
 
 export default router;

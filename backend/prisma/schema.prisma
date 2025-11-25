@@ -1,3 +1,5 @@
+// prisma/schema.prisma
+
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
@@ -35,23 +37,29 @@ enum PaymentStatus {
   FAILED
 }
 
+enum MaintenancePriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
 model User {
-  id        Int    @id @default(autoincrement())
-  name      String
-  email     String @unique
-  password  String
-  role      Role   @default(TENANT)
+  id       Int    @id @default(autoincrement())
+  name     String
+  email    String @unique
+  password String
+  role     Role   @default(TENANT)
 
   tenant     Tenant?
-  properties Property[]
+  properties Property[] @relation("LandlordProperties")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Tenant {
-  id     Int    @id @default(autoincrement())
-  phone  String?
+  id    Int     @id @default(autoincrement())
+  phone String?
 
   userId Int  @unique
   user   User @relation(fields: [userId], references: [id])
@@ -60,13 +68,16 @@ model Tenant {
 }
 
 model Property {
-  id        Int    @id @default(autoincrement())
-  name      String?
-  address   String
-  city      String
+  id          Int     @id @default(autoincrement())
+  title       String
+  address     String
+  city        String
+  province    String
+  postalCode  String
+  description String?
 
-  ownerId Int
-  owner   User @relation(fields: [ownerId], references: [id])
+  landlordId Int
+  landlord   User @relation("LandlordProperties", fields: [landlordId], references: [id])
 
   units Unit[]
 
@@ -77,6 +88,10 @@ model Property {
 model Unit {
   id         Int    @id @default(autoincrement())
   unitNumber String
+
+  bedrooms   Int   @default(0)
+  bathrooms  Int   @default(0)
+  rentAmount Float @default(0)
 
   propertyId Int
   property   Property @relation(fields: [propertyId], references: [id])
@@ -89,29 +104,33 @@ model Unit {
 
 model Lease {
   id        Int         @id @default(autoincrement())
-  rent      Float
   startDate DateTime
   endDate   DateTime
+  rent      Int?
   status    LeaseStatus @default(ACTIVE)
 
-  unitId Int
-  unit   Unit @relation(fields: [unitId], references: [id])
-
-  tenantId Int
   tenant   Tenant @relation(fields: [tenantId], references: [id])
+  tenantId Int
 
+  unit   Unit @relation(fields: [unitId], references: [id])
+  unitId Int
+
+  // Payments tied to this lease
   payments Payment[]
-  requests MaintenanceRequest[]
+
+  // Maintenance requests tied to this lease
+  maintenanceRequests MaintenanceRequest[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Payment {
-  id        Int           @id @default(autoincrement())
-  amount    Float
-  status    PaymentStatus @default(PENDING)
-  paidAt    DateTime?
+  id                    Int           @id @default(autoincrement())
+  amount                Float
+  dueDate               DateTime
+  status                PaymentStatus @default(PENDING)
+  paidAt                DateTime?
   stripePaymentIntentId String?
 
   leaseId Int
@@ -122,14 +141,16 @@ model Payment {
 }
 
 model MaintenanceRequest {
-  id          Int               @id @default(autoincrement())
+  id          Int                 @id @default(autoincrement())
   title       String
   description String?
-  status      MaintenanceStatus @default(PENDING)
+  status      MaintenanceStatus   @default(PENDING)
+  priority    MaintenancePriority @default(MEDIUM)
 
   leaseId Int
   lease   Lease @relation(fields: [leaseId], references: [id])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  completedAt DateTime?
 }

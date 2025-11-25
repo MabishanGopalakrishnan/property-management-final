@@ -1,86 +1,60 @@
-// import {
-//   createUnitService,
-//   getUnitsByPropertyService,
-//   updateUnitService,
-//   deleteUnitService
-// } from "../services/unitService.js";
-
-// export const createUnit = async (req, res) => {
-//   try {
-//     const propertyId = parseInt(req.params.propertyId);
-//     const unit = await createUnitService(propertyId, req.body);
-//     res.json(unit);
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// };
-
-// export const getUnitsByProperty = async (req, res) => {
-//   try {
-//     const propertyId = parseInt(req.params.propertyId);
-//     const units = await getUnitsByPropertyService(propertyId);
-//     res.json(units);
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// };
-
-// export const updateUnit = async (req, res) => {
-//   try {
-//     const id = parseInt(req.params.id);
-//     const updated = await updateUnitService(id, req.body);
-//     res.json(updated);
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// };
-
-// export const deleteUnit = async (req, res) => {
-//   try {
-//     const id = parseInt(req.params.id);
-//     const deleted = await deleteUnitService(id);
-//     res.json(deleted);
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// };
-
-
+// backend/src/controllers/unitController.js
 import {
   createUnitService,
   listUnitsService,
   updateUnitService,
-  deleteUnitService
+  deleteUnitService,
 } from "../services/unitService.js";
 
-export const createUnit = async (req, res, next) => {
+export const listUnits = async (req, res) => {
   try {
-    const ownerId = req.user.id;
-    const unit = await createUnitService(ownerId, req.params.propertyId, req.body);
-    res.status(201).json(unit);
-  } catch (err) { next(err); }
-};
-
-export const listUnits = async (req, res, next) => {
-  try {
-    const ownerId = req.user.id;
-    const units = await listUnitsService(ownerId, req.params.propertyId);
+    const landlordId = req.user.id;
+    const propertyId = req.params.propertyId;
+    const units = await listUnitsService(landlordId, propertyId);
     res.json(units);
-  } catch (err) { next(err); }
+  } catch (err) {
+    console.error("List units error:", err);
+    res.status(400).json({ error: err.message });
+  }
 };
 
-export const updateUnit = async (req, res, next) => {
+export const createUnit = async (req, res) => {
   try {
-    const ownerId = req.user.id;
-    const updated = await updateUnitService(ownerId, req.params.unitId, req.body);
+    console.log("REQ.USER:", req.user);
+    console.log("UNIT BODY:", req.body);
+    console.log("PROPERTY ID:", req.params.propertyId);
+
+    const landlordId = req.user.id;
+    const propertyId = req.params.propertyId;
+    const unit = await createUnitService(landlordId, propertyId, req.body);
+
+    res.json(unit);
+  } catch (err) {
+    console.error("Unit creation error:", err);
+    res.status(400).json({ error: err.message });
+  }
+};
+
+export const updateUnit = async (req, res) => {
+  try {
+    const landlordId = req.user.id;
+    const unitId = req.params.unitId;
+    const updated = await updateUnitService(landlordId, unitId, req.body);
     res.json(updated);
-  } catch (err) { next(err); }
+  } catch (err) {
+    console.error("Update unit error:", err);
+    res.status(400).json({ error: err.message });
+  }
 };
 
-export const deleteUnit = async (req, res, next) => {
+export const deleteUnit = async (req, res) => {
   try {
-    const ownerId = req.user.id;
-    const deleted = await deleteUnitService(ownerId, req.params.unitId);
+    const landlordId = req.user.id;
+    const unitId = req.params.unitId;
+    const deleted = await deleteUnitService(landlordId, unitId);
     res.json(deleted);
-  } catch (err) { next(err); }
+  } catch (err) {
+    console.error("Delete unit error:", err);
+    res.status(400).json({ error: err.message });
+  }
 };

@@ -1,23 +1,45 @@
+// backend/src/routes/paymentRoutes.js
 import express from "express";
+import { authRequired } from "../middleware/authMiddleware.js";
+import { requireRole } from "../middleware/roleMiddleware.js";
 import {
-  createPaymentIntent,
-  getPaymentsByLease,
-  updatePaymentStatus,
-  stripeWebhook
+  getMyPayments,
+  getLandlordPayments,
+  getLeasePayments,
+  payPayment,
+  getLandlordPaymentSummary,
+  getLandlordPaymentChart,
 } from "../controllers/paymentController.js";
 
 const router = express.Router();
 
-// Create Stripe payment intent
-router.post("/create-intent", createPaymentIntent);
+// All payment routes require authentication
+router.use(authRequired);
 
-// Get payments for lease
-router.get("/lease/:leaseId", getPaymentsByLease);
+// Tenant: view their own payments
+router.get("/mine", requireRole("TENANT"), getMyPayments);
 
-// Update payment status manually
-router.put("/:id", updatePaymentStatus);
+// Property manager: all payments
+router.get("/landlord", requireRole("LANDLORD"), getLandlordPayments);
 
-// Stripe webhook
-router.post("/webhook", express.raw({ type: "application/json" }), stripeWebhook);
+// Property manager: analytics KPIs
+router.get(
+  "/landlord/summary",
+  requireRole("LANDLORD"),
+  getLandlordPaymentSummary
+);
+
+// Property manager: monthly chart data
+router.get(
+  "/landlord/chart",
+  requireRole("LANDLORD"),
+  getLandlordPaymentChart
+);
+
+// Payments for a specific lease
+router.get("/lease/:leaseId", getLeasePayments);
+
+// Tenant marks a payment as paid
+router.post("/:paymentId/pay", requireRole("TENANT"), payPayment);
 
 export default router;
