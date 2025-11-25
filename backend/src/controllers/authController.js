@@ -30,6 +30,8 @@
 
 import { registerService, loginService } from "../services/authService.js";
 import prisma from "../prisma/client.js";
+import { googleLoginService } from "../services/googleAuthService.js";
+
 
 export const register = async (req, res, next) => {
   try {
@@ -60,3 +62,19 @@ export const getMe = async (req, res) => {
   });
   res.json(user);
 };
+
+export const googleLogin = async (req, res, next) => {
+  try {
+    const { idToken, role } = req.body;
+
+    if (!idToken || !role) {
+      return res.status(400).json({ message: "idToken and role required" });
+    }
+
+    const result = await googleLoginService({ idToken, role });
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
