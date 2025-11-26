@@ -2,7 +2,6 @@
 import { useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { getMe } from "../api/auth";
-import Navbar from "../components/Navbar";
 
 export default function Dashboard() {
   const { user, setUser } = useAuth();
@@ -30,8 +29,6 @@ export default function Dashboard() {
 
   return (
     <div className="page">
-      <Navbar />
-
       <main className="page-inner">
         <section>
           <h1 className="page-title">

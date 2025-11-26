@@ -11,7 +11,13 @@ async function getTenantOrThrow(userId) {
   });
 
   if (!tenant) {
-    throw new Error("Tenant profile not found for this user.");
+    // If tenant profile doesn't exist, create one
+    console.warn(`Tenant profile not found for userId ${userId}. Creating one.`);
+    const newTenant = await prisma.tenant.create({
+      data: { userId },
+      include: { user: true }
+    });
+    return newTenant;
   }
 
   return tenant;
@@ -305,4 +311,32 @@ export async function getTenantMaintenanceService(userId) {
     unitNumber: r.lease.unit.unitNumber,
     propertyTitle: r.lease.unit.property.title,
   }));
+}
+// ---------- CREATE MAINTENANCE REQUEST ----------
+export async function createTenantMaintenanceRequestService(userId, data) {
+  const tenant = await getTenantOrThrow(userId);
+
+  // A tenant must have an active lease to create a maintenance request
+  const lease = await prisma.lease.findFirst({
+    where: {
+      tenantId: tenant.id,
+      status: "ACTIVE",
+    },
+  });
+
+  if (!lease) {
+    throw new Error("You do not have an active lease.");
+  }
+
+  // Create maintenance request
+  const request = await prisma.maintenanceRequest.create({
+    data: {
+      title: data.title,
+      description: data.description,
+      priority: data.priority || "MEDIUM",
+      leaseId: lease.id,
+    },
+  });
+
+  return request;
 }

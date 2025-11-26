@@ -1,35 +1,41 @@
 // backend/src/routes/tenantRoutes.js
 import express from "express";
 import { authRequired, requireRole } from "../middleware/authMiddleware.js";
+
+// NEW tenant portal controllers
 import {
-  listTenants,
-  getTenantPortalProfile,
-  getTenantLeases,
+  getTenantOverview,
+  getTenantProperties,
+  getTenantUnits,
+  getTenantLease,
   getTenantPayments,
-  createTenantMaintenanceRequest,
-  getTenantMaintenanceRequests,
-} from "../controllers/tenantController.js";
+  getTenantMaintenance,
+  createTenantMaintenance
+} from "../controllers/tenantPortalController.js";
 
 const router = express.Router();
 
-// LANDLORD — list all tenants
-router.get("/", authRequired, requireRole("LANDLORD"), listTenants);
+/* ------------------- TENANT PORTAL ROUTES ------------------- */
 
-// TENANT PORTAL ROUTES
-router.get("/me", authRequired, requireRole("TENANT"), getTenantPortalProfile);
-router.get("/leases", authRequired, requireRole("TENANT"), getTenantLeases);
+// Dashboard overview
+router.get("/overview", authRequired, requireRole("TENANT"), getTenantOverview);
+
+// Properties
+router.get("/properties", authRequired, requireRole("TENANT"), getTenantProperties);
+
+// Units
+router.get("/units", authRequired, requireRole("TENANT"), getTenantUnits);
+
+// Lease info
+router.get("/lease", authRequired, requireRole("TENANT"), getTenantLease);
+
+// Payments
 router.get("/payments", authRequired, requireRole("TENANT"), getTenantPayments);
-router.get(
-  "/maintenance",
-  authRequired,
-  requireRole("TENANT"),
-  getTenantMaintenanceRequests
-);
-router.post(
-  "/maintenance",
-  authRequired,
-  requireRole("TENANT"),
-  createTenantMaintenanceRequest
-);
+
+// Maintenance (list)
+router.get("/maintenance", authRequired, requireRole("TENANT"), getTenantMaintenance);
+
+// Maintenance (create new request)
+router.post("/maintenance", authRequired, requireRole("TENANT"), createTenantMaintenance);
 
 export default router;

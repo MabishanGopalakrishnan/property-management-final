@@ -1,12 +1,7 @@
 // src/pages/Units.jsx
 import { useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
 import { getMyProperties } from "../api/properties";
-import {
-  getUnitsByProperty,
-  createUnit,
-  deleteUnit,
-} from "../api/units";
+import { getUnitsByProperty, createUnit, deleteUnit } from "../api/units";
 import { useAuth } from "../context/AuthContext";
 
 export default function Units() {
@@ -15,6 +10,7 @@ export default function Units() {
   const [selectedProperty, setSelectedProperty] = useState("");
   const [units, setUnits] = useState([]);
   const [loadingUnits, setLoadingUnits] = useState(false);
+
   const [form, setForm] = useState({
     unitNumber: "",
     bedrooms: 1,
@@ -27,8 +23,8 @@ export default function Units() {
       try {
         const data = await getMyProperties();
         setProperties(data);
-      } catch (e) {
-        console.error("Failed to load properties", e);
+      } catch (err) {
+        console.error("Failed to load properties", err);
       }
     };
     load();
@@ -40,11 +36,10 @@ export default function Units() {
     try {
       const data = await getUnitsByProperty(propertyId);
       setUnits(data);
-    } catch (e) {
-      console.error("Failed to load units", e);
-    } finally {
-      setLoadingUnits(false);
+    } catch (err) {
+      console.error("Failed to load units", err);
     }
+    setLoadingUnits(false);
   };
 
   const handlePropertyChange = (e) => {
@@ -53,16 +48,14 @@ export default function Units() {
     loadUnits(id);
   };
 
-  const handleFormChange = (e) => {
+  const handleForm = (e) => {
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
   };
 
-  const handleCreateUnit = async (e) => {
+  const submitNewUnit = async (e) => {
     e.preventDefault();
-    if (!selectedProperty) {
-      alert("Select a property first.");
-      return;
-    }
+    if (!selectedProperty) return alert("Select a property first.");
+
     try {
       await createUnit(Number(selectedProperty), {
         unitNumber: form.unitNumber,
@@ -70,98 +63,109 @@ export default function Units() {
         bathrooms: Number(form.bathrooms),
         rentAmount: Number(form.rentAmount),
       });
+
       setForm({ unitNumber: "", bedrooms: 1, bathrooms: 1, rentAmount: 0 });
       await loadUnits(selectedProperty);
-    } catch (e) {
-      console.error(e);
+    } catch (err) {
+      console.error("Failed to create unit:", err);
       alert("Failed to create unit.");
     }
   };
 
-  const handleDeleteUnit = async (id) => {
+  const handleDelete = async (id) => {
     if (!confirm("Delete this unit?")) return;
+
     try {
       await deleteUnit(id);
-      setUnits((u) => u.filter((x) => x.id !== id));
-    } catch (e) {
-      console.error(e);
+      setUnits((prev) => prev.filter((u) => u.id !== id));
+    } catch (err) {
+      console.error(err);
       alert("Failed to delete unit.");
     }
   };
 
   return (
     <div className="page">
-      <Navbar />
       <main className="page-inner">
         <h1 className="page-title">Units</h1>
         <p className="muted">
           {user?.role === "LANDLORD"
-            ? "View and manage units within your properties."
-            : "View units linked to your lease(s)."}
+            ? "Manage units inside each property."
+            : "Units linked to your leases."}
         </p>
 
+        {/* Select Property */}
         <section className="card">
           <label className="field-label">Select Property</label>
+
           <select
             className="input"
             value={selectedProperty}
             onChange={handlePropertyChange}
           >
-            <option value="">-- Choose a property --</option>
+            <option value="">Choose a property...</option>
             {properties.map((p) => (
               <option key={p.id} value={p.id}>
-                {p.title} - {p.city}
+                {p.title} — {p.city}
               </option>
             ))}
           </select>
         </section>
 
+        {/* Create Unit */}
         {selectedProperty && user?.role === "LANDLORD" && (
           <section className="card">
             <h2>Add Unit</h2>
-            <form className="form-grid" onSubmit={handleCreateUnit}>
+
+            <form className="form-grid" onSubmit={submitNewUnit}>
               <input
                 className="input"
                 placeholder="Unit Number"
                 name="unitNumber"
                 value={form.unitNumber}
-                onChange={handleFormChange}
+                onChange={handleForm}
                 required
               />
+
               <input
                 className="input"
                 type="number"
-                min={0}
                 name="bedrooms"
+                min="0"
                 value={form.bedrooms}
-                onChange={handleFormChange}
+                onChange={handleForm}
                 placeholder="Bedrooms"
               />
+
               <input
                 className="input"
                 type="number"
-                min={0}
                 name="bathrooms"
+                min="0"
                 value={form.bathrooms}
-                onChange={handleFormChange}
+                onChange={handleForm}
                 placeholder="Bathrooms"
               />
+
               <input
                 className="input"
                 type="number"
-                min={0}
                 name="rentAmount"
+                min="0"
                 value={form.rentAmount}
-                onChange={handleFormChange}
+                onChange={handleForm}
                 placeholder="Rent Amount"
               />
+
               <button className="btn-primary">Create Unit</button>
             </form>
           </section>
         )}
 
+        {/* Units Table */}
         <section className="card">
           <h2>Units</h2>
+
           {loadingUnits ? (
             <p>Loading units...</p>
           ) : units.length === 0 ? (
@@ -178,6 +182,7 @@ export default function Units() {
                     {user?.role === "LANDLORD" && <th />}
                   </tr>
                 </thead>
+
                 <tbody>
                   {units.map((u) => (
                     <tr key={u.id}>
@@ -185,11 +190,12 @@ export default function Units() {
                       <td>{u.bedrooms}</td>
                       <td>{u.bathrooms}</td>
                       <td>${u.rentAmount}</td>
+
                       {user?.role === "LANDLORD" && (
                         <td>
                           <button
                             className="btn-link danger"
-                            onClick={() => handleDeleteUnit(u.id)}
+                            onClick={() => handleDelete(u.id)}
                           >
                             Delete
                           </button>

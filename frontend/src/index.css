@@ -337,3 +337,712 @@ a {
   }
 }
 
+/***********************************************
+  MAINTENANCE DASHBOARD — DARK THEME
+************************************************/
+
+/* Filters Grid */
+.filters-grid {
+  display: grid;
+  grid-template-columns: 1fr 140px 150px 200px;
+  gap: 1rem;
+  margin: 1.5rem 0 2.2rem;
+}
+
+/* Maintenance Card */
+.maintenance-card {
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(51, 65, 85, 0.7);
+  border-radius: 1rem;
+  padding: 1.3rem 1.5rem;
+  cursor: pointer;
+  transition: 0.18s ease;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+}
+
+.maintenance-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.6);
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.maintenance-card h3 {
+  margin-bottom: 0.5rem;
+  color: #f1f5f9;
+}
+
+.maintenance-card p {
+  margin: 0.2rem 0;
+}
+
+/***********************************************
+  PRIORITY BADGES
+************************************************/
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-right: 0.4rem;
+  letter-spacing: 0.02em;
+}
+
+/* Priority Levels */
+.badge-LOW {
+  background: rgba(59, 130, 246, 0.3);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.6);
+}
+
+.badge-MEDIUM {
+  background: rgba(234, 179, 8, 0.3);
+  color: #facc15;
+  border: 1px solid rgba(234, 179, 8, 0.6);
+}
+
+.badge-HIGH {
+  background: rgba(239, 68, 68, 0.3);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.6);
+}
+
+/***********************************************
+  STATUS BADGES
+************************************************/
+.status-PENDING {
+  background: rgba(234, 179, 8, 0.25);
+  color: #facc15;
+  border: 1px solid rgba(234, 179, 8, 0.5);
+}
+
+.status-IN_PROGRESS {
+  background: rgba(59, 130, 246, 0.25);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.5);
+}
+
+.status-COMPLETED {
+  background: rgba(34, 197, 94, 0.25);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.5);
+}
+
+.status-CANCELED {
+  background: rgba(107, 114, 128, 0.25);
+  color: #9ca3af;
+  border: 1px solid rgba(107, 114, 128, 0.5);
+}
+
+/***********************************************
+  DRAWER (DETAIL PANEL)
+************************************************/
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 390px;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.98);
+  border-left: 1px solid rgba(55, 65, 81, 0.7);
+  box-shadow: -6px 0 20px rgba(0, 0, 0, 0.4);
+  animation: slideIn 0.25s ease-out;
+  z-index: 9999;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.drawer-inner {
+  padding: 1.8rem;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.close-btn {
+  float: right;
+  background: transparent;
+  border: none;
+  font-size: 1.4rem;
+  color: #94a3b8;
+  cursor: pointer;
+}
+
+.close-btn:hover {
+  color: #f8fafc;
+}
+
+.drawer h2 {
+  margin-top: 0.2rem;
+  margin-bottom: 0.4rem;
+  color: #f8fafc;
+}
+
+/***********************************************
+  PHOTO GRID
+************************************************/
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+  gap: 0.6rem;
+  margin: 0.6rem 0 1rem;
+}
+
+.photo-thumb {
+  width: 100%;
+  height: 85px;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  background: #1e293b;
+  border: 1px solid #334155;
+}
+
+/***********************************************
+  UPLOAD BUTTON
+************************************************/
+.upload-btn {
+  background: linear-gradient(135deg, #06b6d4, #3b82f6);
+  padding: 0.55rem 0.9rem;
+  border-radius: 0.6rem;
+  color: #0f172a;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-block;
+  margin-top: 0.5rem;
+}
+
+.upload-btn:hover {
+  filter: brightness(1.05);
+}
+
+/***********************************************
+  RESPONSIVE
+************************************************/
+@media (max-width: 900px) {
+  .filters-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .drawer {
+    width: 100%;
+  }
+}
+/* -------------------------- */
+/* MODERN MAINTENANCE CARDS   */
+/* -------------------------- */
+
+.maint-card {
+  background: rgba(17, 24, 39, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  border-radius: 1.1rem;
+  padding: 1.4rem 1.6rem;
+  margin-bottom: 1.2rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.maint-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+}
+
+/* --- Title + top-row --- */
+
+.maint-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: .3rem;
+}
+
+.maint-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+/* --- Tags --- */
+
+.tag {
+  padding: 0.25rem 0.55rem;
+  font-size: 0.72rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+}
+
+.tag.priority-low {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+}
+
+.tag.priority-medium {
+  background: rgba(234, 179, 8, 0.15);
+  color: #eab308;
+}
+
+.tag.priority-high {
+  background: rgba(239, 68, 68, 0.18);
+  color: #ef4444;
+}
+
+.tag.status-pending {
+  background: rgba(14, 165, 233, 0.15);
+  color: #38bdf8;
+}
+
+.tag.status-in_progress {
+  background: rgba(168, 85, 247, 0.15);
+  color: #a855f7;
+}
+
+.tag.status-completed {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+}
+
+.tag.status-canceled {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+/* --- Description text --- */
+
+.maint-description {
+  color: #cbd5e1;
+  margin: 0.4rem 0 .7rem;
+  line-height: 1.45;
+  font-size: .85rem;
+}
+
+/* --- Footer section (unit + date + actions) --- */
+
+.maint-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: .6rem;
+}
+
+.maint-meta {
+  font-size: .78rem;
+  color: #94a3b8;
+}
+
+.maint-actions {
+  display: flex;
+  gap: .5rem;
+}
+
+.maint-btn {
+  border: none;
+  padding: .45rem .75rem;
+  border-radius: .45rem;
+  cursor: pointer;
+  font-size: .78rem;
+  font-weight: 600;
+  transition: opacity 0.15s ease;
+}
+
+.maint-btn:hover {
+  opacity: 0.9;
+}
+
+.maint-btn.primary {
+  background: linear-gradient(135deg, #22c55e, #06b6d4);
+  color: #0b1120;
+}
+
+.maint-btn.outline {
+  background: transparent;
+  border: 1px solid #475569;
+  color: #e2e8f0;
+}
+/* =============================
+   PAYMENT ANALYTICS DASHBOARD
+============================= */
+
+.analytics-kpis .kpi-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.kpi-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9ca3af;
+}
+
+.kpi-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #f9fafb;
+}
+
+/* Section headers */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.section-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.section-subtitle {
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+.section-actions {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+/* ---------- Tenant layout ---------- */
+
+.tenant-shell {
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #111827 0, #020617 45%, #000 100%);
+  color: #f9fafb;
+}
+
+.tenant-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 2.5rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(18px);
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+
+.tenant-header-left {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+.tenant-brand {
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  color: #7dd3fc;
+}
+
+.tenant-nav {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.tenant-nav-link {
+  font-size: 0.95rem;
+  color: #cbd5f5;
+  text-decoration: none;
+  padding-bottom: 0.3rem;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.tenant-nav-link:hover {
+  color: #e5e7eb;
+}
+
+.tenant-nav-link.active {
+  color: #7fffd4;
+  border-color: #7fffd4;
+}
+
+.tenant-header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.9rem;
+}
+
+.tenant-user-email {
+  color: #e5e7eb;
+}
+
+/* Buttons reused */
+.btn-outline {
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  background: transparent;
+  color: #e5e7eb;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.btn-outline:hover {
+  border-color: #7dd3fc;
+}
+
+/* ---------- Tenant main / cards ---------- */
+
+.tenant-main {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
+}
+
+.tenant-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.tenant-page-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.tenant-hero h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+}
+
+.tenant-hero h1 span {
+  color: #7fffd4;
+}
+
+.tenant-hero .subtitle {
+  margin-top: 0.5rem;
+  color: #94a3b8;
+}
+
+.tenant-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+.tenant-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.tenant-grid-2.compact {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  margin-top: 1rem;
+  gap: 1.25rem;
+}
+
+.tenant-card {
+  background: radial-gradient(circle at top left, #1f2937 0, #020617 80%);
+  border-radius: 1rem;
+  padding: 1.35rem 1.5rem;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.tenant-card h2 {
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+}
+
+.tenant-card.center {
+  text-align: center;
+  align-items: center;
+}
+
+.muted {
+  color: #9ca3af;
+}
+
+.muted.small {
+  font-size: 0.85rem;
+}
+
+.muted.tiny {
+  font-size: 0.75rem;
+}
+
+.label {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9ca3af;
+}
+
+.metric-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.4rem;
+}
+
+.metric-value {
+  font-weight: 600;
+}
+
+.metric-large {
+  font-size: 2.4rem;
+  font-weight: 700;
+}
+
+.upcoming-box {
+  margin-top: 0.9rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 0.9rem;
+  background: rgba(15, 118, 110, 0.25);
+}
+
+/* Status badge */
+
+.status-badge {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.status-badge.active {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+}
+
+.status-badge.pending {
+  background: rgba(234, 179, 8, 0.15);
+  color: #facc15;
+}
+
+.status-badge.paid {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+}
+
+.status-badge.unpaid,
+.status-badge.overdue {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+}
+
+/* Forms */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 0.8rem;
+}
+
+.field span {
+  font-size: 0.85rem;
+  color: #d1d5db;
+}
+
+.field input,
+.field textarea,
+.field select {
+  background: rgba(15, 23, 42, 0.9);
+  border-radius: 0.75rem;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  padding: 0.55rem 0.75rem;
+  color: #f9fafb;
+  font-size: 0.9rem;
+}
+
+.field textarea {
+  resize: vertical;
+}
+
+.btn-primary {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border-radius: 0.9rem;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  background: linear-gradient(90deg, #22c55e, #06b6d4);
+  color: #0b1020;
+}
+
+/* Table */
+
+.tenant-table-card {
+  overflow-x: auto;
+}
+
+.tenant-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.tenant-table th,
+.tenant-table td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid rgba(30, 64, 175, 0.4);
+  text-align: left;
+}
+
+.tenant-table th {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9ca3af;
+}
+
+/* Maintenance list */
+
+.tenant-request-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-top: 0.75rem;
+}
+
+.tenant-request-item {
+  padding: 0.75rem 0.85rem;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.8);
+}
+
+.request-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+/* Alerts */
+
+.tenant-alert {
+  padding: 0.6rem 0.9rem;
+  border-radius: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.tenant-alert.error {
+  background: rgba(127, 29, 29, 0.35);
+  border: 1px solid rgba(248, 113, 113, 0.8);
+}

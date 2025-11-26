@@ -1,33 +1,24 @@
+// backend/src/routes/tenantPortalRoutes.js
 import express from "express";
-import { requireAuth } from "../middleware/authMiddleware.js";
+import { authRequired, requireRole } from "../middleware/authMiddleware.js";
+
 import {
   getTenantOverview,
   getTenantProperties,
-  getTenantLeases,
+  getTenantUnits,
+  getTenantLease,
   getTenantPayments,
-  createMaintenanceRequest,
   getTenantMaintenance
 } from "../controllers/tenantPortalController.js";
 
 const router = express.Router();
 
-// ALL tenant routes must require auth
-router.use(requireAuth);
-
-// Tenant overview
-router.get("/overview", getTenantOverview);
-
-// Tenant properties
-router.get("/properties", getTenantProperties);
-
-// Tenant leases
-router.get("/leases", getTenantLeases);
-
-// Tenant payments
-router.get("/payments", getTenantPayments);
-
-// Tenant maintenance
-router.get("/maintenance", getTenantMaintenance);
-router.post("/maintenance", createMaintenanceRequest);
+// All these routes are for TENANTS
+router.get("/overview", authRequired, requireRole("TENANT"), getTenantOverview);
+router.get("/properties", authRequired, requireRole("TENANT"), getTenantProperties);
+router.get("/units", authRequired, requireRole("TENANT"), getTenantUnits);
+router.get("/lease", authRequired, requireRole("TENANT"), getTenantLease);
+router.get("/payments", authRequired, requireRole("TENANT"), getTenantPayments);
+router.get("/maintenance", authRequired, requireRole("TENANT"), getTenantMaintenance);
 
 export default router;

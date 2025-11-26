@@ -41,10 +41,18 @@ export function AuthProvider({ children }) {
     const { token, user } = await loginRequest({ email, password });
     localStorage.setItem("token", token);
     setUser(user);
-    navigate("/dashboard");
+
+    if (user.role === "LANDLORD") {
+      navigate("/dashboard");
+    } else {
+      // tenant
+      navigate("/tenant");
+    }
+
+    return user;
   };
 
-  // REGISTER — now includes NAME properly
+  // REGISTER
   const register = async ({ name, email, password, role, phone }) => {
     return await registerRequest({
       name,

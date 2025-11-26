@@ -1,80 +1,166 @@
 // src/pages/Payments.jsx
-import { useState } from "react";
-import Navbar from "../components/Navbar";
-import { getPaymentsByLease } from "../api/payments";
+import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import {
+  getMyPayments,
+  getLandlordPayments,
+  payPayment,
+} from "../api/payments";
+
+function formatDate(val) {
+  if (!val) return "-";
+  const d = new Date(val);
+  return isNaN(d.getTime()) ? "-" : d.toLocaleDateString();
+}
+
+function formatMoney(val) {
+  return val == null ? "-" : `$${Number(val).toFixed(2)}`;
+}
+
+function computeStatus(payment) {
+  if (payment.status === "PAID") return "PAID";
+  if (payment.status === "FAILED") return "FAILED";
+
+  const now = new Date();
+  const due = payment.dueDate ? new Date(payment.dueDate) : null;
+
+  if (due && due < now) return "LATE";
+  return "PENDING";
+}
 
 export default function Payments() {
   const { user } = useAuth();
-  const [leaseId, setLeaseId] = useState("");
-  const [payments, setPayments] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const isTenant = user?.role === "TENANT";
+  const isLandlord = user?.role === "LANDLORD";
 
-  const handleLoad = async (e) => {
-    e.preventDefault();
-    if (!leaseId) return;
+  const [payments, setPayments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
+  const load = async () => {
+    if (!user) return;
+
     setLoading(true);
+    setError("");
+
     try {
-      const data = await getPaymentsByLease(Number(leaseId));
+      const data = isTenant ? await getMyPayments()
+                            : await getLandlordPayments();
       setPayments(data);
-    } catch (e) {
-      console.error(e);
-      alert("Failed to load payments. Check leaseId or backend route.");
-    } finally {
-      setLoading(false);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to load payments.");
     }
+
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    load();
+  }, [user?.role]);
+
+  const handlePay = async (id) => {
+    if (!confirm("Mark this payment as paid?")) return;
+
+    try {
+      setSubmitting(true);
+      await payPayment(id);
+      await load();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to mark as paid.");
+    }
+
+    setSubmitting(false);
   };
 
   return (
     <div className="page">
-      <Navbar />
       <main className="page-inner">
         <h1 className="page-title">Payments</h1>
         <p className="muted">
-          {user?.role === "LANDLORD"
-            ? "View Stripe-backed rent payments for a lease."
-            : "See your rent payments for a lease."}
+          {isTenant && "View your rent payments."}
+          {isLandlord && "View all payments across your properties."}
+          {!isTenant && !isLandlord && "View payments linked to your account."}
         </p>
 
-        <section className="card">
-          <form className="inline-form" onSubmit={handleLoad}>
-            <label className="field-label">Lease ID</label>
-            <input
-              className="input"
-              value={leaseId}
-              onChange={(e) => setLeaseId(e.target.value)}
-              placeholder="Enter lease ID"
-            />
-            <button className="btn-primary" disabled={loading}>
-              {loading ? "Loading..." : "Load Payments"}
-            </button>
-          </form>
-        </section>
+        {error && <div className="alert error">{error}</div>}
 
         <section className="card">
-          <h2>Payment History</h2>
-          {payments.length === 0 ? (
-            <p className="muted">No payments loaded.</p>
+          {loading ? (
+            <p>Loading...</p>
+          ) : payments.length === 0 ? (
+            <p>No payments found.</p>
           ) : (
             <div className="table-wrapper">
               <table className="table">
                 <thead>
                   <tr>
-                    <th>ID</th>
+                    {isLandlord && <th>Property</th>}
+                    <th>Unit</th>
+                    {isLandlord && <th>Tenant</th>}
+                    <th>Due</th>
                     <th>Amount</th>
                     <th>Status</th>
                     <th>Paid At</th>
+                    {isTenant && <th>Action</th>}
                   </tr>
                 </thead>
+
                 <tbody>
-                  {payments.map((p) => (
-                    <tr key={p.id}>
-                      <td>{p.id}</td>
-                      <td>${p.amount}</td>
-                      <td>{p.status}</td>
-                      <td>{p.datePaid ? new Date(p.datePaid).toLocaleString() : "-"}</td>
-                    </tr>
-                  ))}
+                  {payments.map((p) => {
+                    const lease = p.lease;
+                    const unit = lease?.unit;
+                    const property = unit?.property;
+
+                    const tenant = lease?.tenant?.user;
+                    const status = computeStatus(p);
+
+                    return (
+                      <tr key={p.id}>
+                        {isLandlord && (
+                          <td>
+                            {property
+                              ? `${property.title} — ${property.city}`
+                              : "-"}
+                          </td>
+                        )}
+
+                        <td>{unit ? unit.unitNumber : "-"}</td>
+
+                        {isLandlord && (
+                          <td>
+                            {tenant
+                              ? `${tenant.name} (${tenant.email})`
+                              : "-"}
+                          </td>
+                        )}
+
+                        <td>{formatDate(p.dueDate || p.createdAt)}</td>
+                        <td>{formatMoney(p.amount)}</td>
+                        <td>{status}</td>
+                        <td>{formatDate(p.paidAt)}</td>
+
+                        {isTenant && (
+                          <td>
+                            {status !== "PAID" &&
+                            status !== "FAILED" &&
+                            !submitting ? (
+                              <button
+                                className="btn btn-small"
+                                onClick={() => handlePay(p.id)}
+                              >
+                                Pay
+                              </button>
+                            ) : (
+                              "-"
+                            )}
+                          </td>
+                        )}
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

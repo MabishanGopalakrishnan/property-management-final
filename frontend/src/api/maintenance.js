@@ -1,20 +1,32 @@
-// src/api/maintenance.js
+// frontend/src/api/maintenance.js
 import API from "./axiosConfig";
 
-// Tenant creates request for a lease
-export const createMaintenanceRequest = async (leaseId, data) => {
-  const res = await API.post(`/maintenance/lease/${leaseId}`, data);
-  return res.data;
-};
-
-// Landlord or tenant list requests (your backend currently returns all)
+// Fetch all maintenance requests (Property Manager)
 export const getMaintenanceRequests = async () => {
   const res = await API.get("/maintenance");
   return res.data;
 };
 
-// Landlord updates status
-export const updateMaintenanceStatus = async (requestId, status) => {
-  const res = await API.put(`/maintenance/${requestId}`, { status });
+// Get details of a single request
+export const getMaintenanceRequest = async (id) => {
+  const res = await API.get(`/maintenance/${id}`);
+  return res.data;
+};
+
+// Update fields: status, priority, contractor, description
+export const updateMaintenanceRequest = async (id, data) => {
+  const res = await API.put(`/maintenance/${id}`, data);
+  return res.data;
+};
+
+// Upload photos
+export const uploadMaintenancePhoto = async (id, file) => {
+  const form = new FormData();
+  form.append("photo", file);
+
+  const res = await API.post(`/maintenance/${id}/photo`, form, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+
   return res.data;
 };

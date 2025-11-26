@@ -2,6 +2,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext.jsx";
 
+/* Landlord pages */
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
@@ -9,8 +10,22 @@ import Properties from "./pages/Properties.jsx";
 import Units from "./pages/Units.jsx";
 import Payments from "./pages/Payments.jsx";
 import Maintenance from "./pages/Maintenance.jsx";
+import Leases from "./pages/Leases.jsx";
+import PaymentsAnalytics from "./pages/PaymentsAnalytics.jsx";
 import NotFound from "./pages/NotFound.jsx";
 
+/* Tenant pages */
+import TenantHome from "./pages/tenant/TenantHome.jsx";
+import TenantLease from "./pages/tenant/TenantLease.jsx";
+import TenantMaintenance from "./pages/tenant/TenantMaintenance.jsx";
+import TenantPayments from "./pages/tenant/TenantPayments.jsx";
+import TenantProperties from "./pages/tenant/TenantProperties.jsx";
+
+/* Layouts */
+import LandlordLayout from "./layouts/LandlordLayout.jsx";
+import TenantLayout from "./layouts/TenantLayout.jsx";
+
+/* LANDLORD PROTECTED ROUTE */
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
 
@@ -23,7 +38,20 @@ function PrivateRoute({ children }) {
     );
   }
 
-  if (!user) {
+  if (!user || user.role !== "LANDLORD") {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+}
+
+/* TENANT PROTECTED ROUTE */
+function TenantRoute({ children }) {
+  const { user, loading } = useAuth();
+
+  if (loading) return <p>Loading...</p>;
+
+  if (!user || user.role !== "TENANT") {
     return <Navigate to="/login" replace />;
   }
 
@@ -33,55 +61,156 @@ function PrivateRoute({ children }) {
 export default function App() {
   return (
     <Routes>
-      {/* Public */}
+
+      {/* Public routes */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
-      {/* Protected */}
+
+      {/* -----------------------------------
+            LANDLORD ROUTES WITH LAYOUT
+      ----------------------------------- */}
       <Route
         path="/dashboard"
         element={
           <PrivateRoute>
-            <Dashboard />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/properties"
-        element={
-          <PrivateRoute>
-            <Properties />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/units"
-        element={
-          <PrivateRoute>
-            <Units />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/payments"
-        element={
-          <PrivateRoute>
-            <Payments />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/maintenance"
-        element={
-          <PrivateRoute>
-            <Maintenance />
+            <LandlordLayout>
+              <Dashboard />
+            </LandlordLayout>
           </PrivateRoute>
         }
       />
 
-      {/* Default routes */}
+      <Route
+        path="/properties"
+        element={
+          <PrivateRoute>
+            <LandlordLayout>
+              <Properties />
+            </LandlordLayout>
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/units"
+        element={
+          <PrivateRoute>
+            <LandlordLayout>
+              <Units />
+            </LandlordLayout>
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/leases"
+        element={
+          <PrivateRoute>
+            <LandlordLayout>
+              <Leases />
+            </LandlordLayout>
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/payments"
+        element={
+          <PrivateRoute>
+            <LandlordLayout>
+              <Payments />
+            </LandlordLayout>
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/analytics"
+        element={
+          <PrivateRoute>
+            <LandlordLayout>
+              <PaymentsAnalytics />
+            </LandlordLayout>
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/maintenance"
+        element={
+          <PrivateRoute>
+            <LandlordLayout>
+              <Maintenance />
+            </LandlordLayout>
+          </PrivateRoute>
+        }
+      />
+
+
+      {/* -----------------------------------
+                TENANT ROUTES WITH LAYOUT
+      ----------------------------------- */}
+      <Route
+        path="/tenant"
+        element={
+          <TenantRoute>
+            <TenantLayout>
+              <TenantHome />
+            </TenantLayout>
+          </TenantRoute>
+        }
+      />
+
+      <Route
+        path="/tenant/properties"
+        element={
+          <TenantRoute>
+            <TenantLayout>
+              <TenantProperties />
+            </TenantLayout>
+          </TenantRoute>
+        }
+      />
+
+      <Route
+        path="/tenant/leases"
+        element={
+          <TenantRoute>
+            <TenantLayout>
+              <TenantLease />
+            </TenantLayout>
+          </TenantRoute>
+        }
+      />
+
+      <Route
+        path="/tenant/payments"
+        element={
+          <TenantRoute>
+            <TenantLayout>
+              <TenantPayments />
+            </TenantLayout>
+          </TenantRoute>
+        }
+      />
+
+      <Route
+        path="/tenant/maintenance"
+        element={
+          <TenantRoute>
+            <TenantLayout>
+              <TenantMaintenance />
+            </TenantLayout>
+          </TenantRoute>
+        }
+      />
+
+
+      {/* Redirects */}
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="*" element={<NotFound />} />
+
     </Routes>
   );
 }
