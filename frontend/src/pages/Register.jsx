@@ -1,12 +1,12 @@
-// src/pages/Register.jsx
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useNavigate, Link } from "react-router-dom";
+import API from "../api/axiosConfig.js"; 
+// ⚠️ If your Register file is deeper (auth/ folder), change to "../../api/axiosConfig.js"
 
 export default function Register() {
-  const { register } = useAuth();
   const navigate = useNavigate();
 
+<<<<<<< HEAD
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -16,9 +16,16 @@ export default function Register() {
   });
 
   const [loading, setLoading] = useState(false);
+=======
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("LANDLORD");
+  const [phone, setPhone] = useState("");
+>>>>>>> 1b23df24c03b6decf4a406c79c06e32b2dcd0df2
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
 
+<<<<<<< HEAD
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -38,10 +45,33 @@ export default function Register() {
       setError(err?.response?.data?.error || "Registration failed.");
     } finally {
       setLoading(false);
+=======
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    try {
+      const payload = {
+        name,
+        email,
+        password,
+        role: role.toUpperCase(), // makes sure LANDLORD / TENANT
+        phone,
+      };
+
+      await API.post("/auth/register", payload);
+
+      // after successful register, go to login
+      navigate("/login");
+    } catch (err) {
+      console.log("REGISTER ERROR:", err.response?.data || err.message);
+      setError(err.response?.data?.message || "Registration failed. Try again.");
+>>>>>>> 1b23df24c03b6decf4a406c79c06e32b2dcd0df2
     }
   };
 
   return (
+<<<<<<< HEAD
     <div className="auth-page">
       <div className="auth-card">
         <h1 className="auth-title">Create Account</h1>
@@ -49,10 +79,19 @@ export default function Register() {
           Landlords manage properties; tenants receive access to their unit,
           payments, and maintenance requests.
         </p>
+=======
+    <div style={{ maxWidth: 420, margin: "60px auto" }}>
+      <h1>Create account</h1>
+      <p>Landlords can manage properties; tenants can submit maintenance and view payments.</p>
+>>>>>>> 1b23df24c03b6decf4a406c79c06e32b2dcd0df2
 
-        {error && <div className="alert error">{error}</div>}
-        {success && <div className="alert success">{success}</div>}
+      {error && (
+        <div style={{ color: "red", marginBottom: 12 }}>
+          {error}
+        </div>
+      )}
 
+<<<<<<< HEAD
         <form onSubmit={handleSubmit} className="auth-form">
 
           {/* NAME FIELD */}
@@ -115,19 +154,67 @@ export default function Register() {
               />
             </>
           )}
+=======
+      <form onSubmit={handleRegister}>
+        <label>Name</label>
+        <input
+          type="text"
+          placeholder="Your full name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          style={{ width: "100%", marginBottom: 10 }}
+        />
 
-          <button className="btn-primary" type="submit" disabled={loading}>
-            {loading ? "Creating account..." : "Register"}
-          </button>
-        </form>
+        <label>Email</label>
+        <input
+          type="email"
+          placeholder="you@email.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          style={{ width: "100%", marginBottom: 10 }}
+        />
 
-        <p className="auth-footer">
-          Already have an account?{" "}
-          <Link to="/login" className="link">
-            Login
-          </Link>
-        </p>
-      </div>
+        <label>Password</label>
+        <input
+          type="password"
+          placeholder="••••••••"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          style={{ width: "100%", marginBottom: 10 }}
+        />
+
+        <label>Phone (optional)</label>
+        <input
+          type="text"
+          placeholder="647-000-0000"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          style={{ width: "100%", marginBottom: 10 }}
+        />
+>>>>>>> 1b23df24c03b6decf4a406c79c06e32b2dcd0df2
+
+        <label>Role</label>
+        <select
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+          required
+          style={{ width: "100%", marginBottom: 16 }}
+        >
+          <option value="LANDLORD">Landlord</option>
+          <option value="TENANT">Tenant</option>
+        </select>
+
+        <button type="submit" style={{ width: "100%" }}>
+          Register
+        </button>
+      </form>
+
+      <p style={{ marginTop: 10 }}>
+        Already have an account? <Link to="/login">Login</Link>
+      </p>
     </div>
   );
 }
