@@ -1,16 +1,35 @@
 // src/pages/tenant/TenantPayments.jsx
 import { useEffect, useState } from "react";
 import { getTenantPayments } from "../../api/tenantPortal";
+import { createPaymentCheckout } from "../../api/payments";
 
 export default function TenantPayments() {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [payingId, setPayingId] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     getTenantPayments()
       .then((data) => setPayments(Array.isArray(data) ? data : []))
+      .catch((err) => setError("Failed to load payments"))
       .finally(() => setLoading(false));
   }, []);
+
+  const handlePayWithStripe = async (paymentId) => {
+    setPayingId(paymentId);
+    setError(null);
+    try {
+      const response = await createPaymentCheckout(paymentId);
+      if (response.url) {
+        // Redirect to Stripe checkout
+        window.location.href = response.url;
+      }
+    } catch (err) {
+      setError("Failed to create checkout session. Please try again.");
+      setPayingId(null);
+    }
+  };
 
   if (loading) {
     return (
@@ -27,6 +46,12 @@ export default function TenantPayments() {
     <div className="tenant-page">
       <h1 className="tenant-page-title">Payments</h1>
 
+      {error && (
+        <div className="tenant-card" style={{ padding: "1rem", color: "#d32f2f", backgroundColor: "#ffebee", borderLeft: "4px solid #d32f2f" }}>
+          {error}
+        </div>
+      )}
+
       {!payments.length ? (
         <div className="tenant-card center">
           <p className="muted">No payments found.</p>
@@ -41,6 +66,7 @@ export default function TenantPayments() {
                 <th>Status</th>
                 <th>Property</th>
                 <th>Unit</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -57,6 +83,27 @@ export default function TenantPayments() {
                   </td>
                   <td>{p.propertyTitle}</td>
                   <td>{p.unitNumber}</td>
+                  <td>
+                    {p.status === "PENDING" ? (
+                      <button
+                        onClick={() => handlePayWithStripe(p.id)}
+                        disabled={payingId === p.id}
+                        style={{
+                          padding: "0.5rem 1rem",
+                          backgroundColor: "#6366f1",
+                          color: "white",
+                          border: "none",
+                          borderRadius: "4px",
+                          cursor: payingId === p.id ? "wait" : "pointer",
+                          opacity: payingId === p.id ? 0.7 : 1,
+                        }}
+                      >
+                        {payingId === p.id ? "Processing..." : "Pay with Stripe"}
+                      </button>
+                    ) : (
+                      <span className="muted">—</span>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>

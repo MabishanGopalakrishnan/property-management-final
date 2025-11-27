@@ -25,6 +25,18 @@ export const payPayment = async (paymentId) => {
   return res.data;
 };
 
+// Create Stripe checkout session for a payment
+export const createPaymentCheckout = async (paymentId) => {
+  const res = await API.post(`/payments/${paymentId}/checkout`);
+  return res.data;
+};
+
+// Trigger a manual sync on the backend to reconcile Stripe events
+export const syncPayments = async () => {
+  const res = await API.post(`/payments/sync`);
+  return res.data;
+};
+
 // ---- Analytics endpoints ----
 
 // KPI summary for manager dashboard

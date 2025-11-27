@@ -9,6 +9,8 @@ import {
   payPayment,
   getLandlordPaymentSummary,
   getLandlordPaymentChart,
+  createCheckoutSession,
+  syncPaymentsWithStripe,
 } from "../controllers/paymentController.js";
 
 const router = express.Router();
@@ -41,5 +43,11 @@ router.get("/lease/:leaseId", getLeasePayments);
 
 // Tenant marks a payment as paid
 router.post("/:paymentId/pay", requireRole("TENANT"), payPayment);
+
+// Tenant: create Stripe checkout session for a payment
+router.post("/:paymentId/checkout", requireRole("TENANT"), createCheckoutSession);
+
+// Landlord: trigger a manual sync with Stripe for pending payments
+router.post("/sync", requireRole("LANDLORD"), syncPaymentsWithStripe);
 
 export default router;

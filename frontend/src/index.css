@@ -800,6 +800,21 @@ a {
   border-color: #7dd3fc;
 }
 
+/* Sync button (landlord) - purple/indigo accent to stand out */
+.btn-sync {
+  background: linear-gradient(90deg, #7c3aed 0%, #6366f1 100%);
+  color: #fff;
+  border: none;
+  padding: 0.45rem 0.9rem;
+  border-radius: 0.6rem;
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.18);
+}
+
+.btn-sync:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+
 /* ---------- Tenant main / cards ---------- */
 
 .tenant-main {
@@ -1009,6 +1024,25 @@ a {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: #9ca3af;
+}
+
+.tenant-table td button {
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.4rem;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.8rem;
+  transition: opacity 0.15s ease;
+}
+
+.tenant-table td button:hover {
+  opacity: 0.85;
+}
+
+.tenant-table td button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Maintenance list */

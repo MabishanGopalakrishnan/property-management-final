@@ -16,6 +16,7 @@ import authRoutes from "./src/routes/authRoutes.js";
 import tenantRoutes from "./src/routes/tenantRoutes.js";
 import webhookRoutes from "./src/routes/webhookRoutes.js";
 import tenantPortalRoutes from "./src/routes/tenantPortalRoutes.js";
+import startSyncJob from "./src/tasks/syncPaymentsJob.js";
 
 
 
@@ -52,5 +53,13 @@ app.get("/", (req, res) => {
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });
 });
+
+// Start background jobs (non-blocking)
+try {
+  startSyncJob();
+  console.log('Background sync job started');
+} catch (err) {
+  console.warn('Failed to start background jobs:', err.message || err);
+}
 
 export default app;

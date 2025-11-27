@@ -2,6 +2,9 @@
 import express from "express";
 import { authRequired, requireRole } from "../middleware/authMiddleware.js";
 
+// Tenant list (for landlords creating leases)
+import { listTenants } from "../controllers/tenantController.js";
+
 // NEW tenant portal controllers
 import {
   getTenantOverview,
@@ -14,6 +17,11 @@ import {
 } from "../controllers/tenantPortalController.js";
 
 const router = express.Router();
+
+/* ------------------- LANDLORD ROUTES ------------------- */
+
+// Get all tenants (for LANDLORD to select when creating leases)
+router.get("/", authRequired, requireRole("LANDLORD"), listTenants);
 
 /* ------------------- TENANT PORTAL ROUTES ------------------- */
 

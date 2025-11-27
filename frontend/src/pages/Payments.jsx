@@ -5,6 +5,7 @@ import {
   getMyPayments,
   getLandlordPayments,
   payPayment,
+  syncPayments,
 } from "../api/payments";
 
 function formatDate(val) {
@@ -37,6 +38,7 @@ export default function Payments() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [syncMessage, setSyncMessage] = useState("");
 
   const load = async () => {
     if (!user) return;
@@ -78,7 +80,34 @@ export default function Payments() {
   return (
     <div className="page">
       <main className="page-inner">
-        <h1 className="page-title">Payments</h1>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <h1 className="page-title">Payments</h1>
+          {isLandlord && (
+            <div>
+              <button
+                className="btn-outline btn-sync"
+                onClick={async () => {
+                  try {
+                    setLoading(true);
+                    setError("");
+                    const resp = await syncPayments();
+                    await load();
+                    const updated = resp?.result?.updated ?? 0;
+                    setSyncMessage(`${updated} payment(s) updated`);
+                    setTimeout(() => setSyncMessage(""), 4000);
+                  } catch (err) {
+                    console.error(err);
+                    setError("Failed to sync payments with Stripe.");
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
+              >
+                Sync payments
+              </button>
+            </div>
+          )}
+        </div>
         <p className="muted">
           {isTenant && "View your rent payments."}
           {isLandlord && "View all payments across your properties."}
@@ -86,6 +115,7 @@ export default function Payments() {
         </p>
 
         {error && <div className="alert error">{error}</div>}
+        {syncMessage && <div className="alert success">{syncMessage}</div>}
 
         <section className="card">
           {loading ? (

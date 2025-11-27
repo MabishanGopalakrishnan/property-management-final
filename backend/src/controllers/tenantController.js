@@ -11,7 +11,13 @@ import {
 export const listTenants = async (req, res) => {
   try {
     const tenants = await listTenantsService();
-    res.json(tenants);
+    // Transform to match frontend expectations: { id, name, email }
+    const formatted = tenants.map((t) => ({
+      id: t.id,
+      name: t.user.name,
+      email: t.user.email,
+    }));
+    res.json(formatted);
   } catch (err) {
     console.error("List tenants error:", err);
     res.status(500).json({ error: "Something went wrong." });
