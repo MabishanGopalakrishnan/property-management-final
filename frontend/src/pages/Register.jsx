@@ -1,45 +1,120 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext.jsx";
+import api from "../api/axiosConfig.js";
 
 export default function Register() {
-  const { register } = useAuth();
   const navigate = useNavigate();
+  const { register: authRegister } = useAuth();
 
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
-    role: "LANDLORD",
-    phone: "", // ✅ keep as phone
+    role: "", // user must pick
   });
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+
+  const googleDivRef = useRef(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm((f) => ({ ...f, [name]: value }));
   };
 
+  // Manual registration – original behaviour
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    setSuccess("");
+
+    if (!form.role) {
+      setError("Please select a role (Landlord or Tenant).");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      await register(form); // ✅ passing full form object correctly
-      setSuccess("Account created! Redirecting to login...");
-      setTimeout(() => navigate("/login"), 1500);
+      const user = await authRegister(form);
+      if (user.role === "LANDLORD") {
+        navigate("/dashboard");
+      } else {
+        navigate("/tenant");
+      }
     } catch (err) {
-      console.log("REGISTER ERROR:", err.response?.data || err.message);
-      setError(err?.response?.data?.error || "Registration failed.");
+      setError(
+        err.response?.data?.error || err.message || "Registration failed"
+      );
     } finally {
       setLoading(false);
     }
   };
+
+  // Google register/login – uses latest role
+  const handleGoogleCredential = async (response, roleFromUI) => {
+    try {
+      setError("");
+
+      const role = (roleFromUI || "").trim();
+      if (!role) {
+        setError("Please select a role above before using Google.");
+        return;
+      }
+
+      const res = await api.post("/auth/google", {
+        credential: response.credential,
+        role,
+      });
+
+      const { token, user } = res.data;
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      // Hard reload so AuthContext re-reads token from localStorage
+      if (user.role === "LANDLORD") {
+        window.location.href = "/dashboard";
+      } else {
+        window.location.href = "/tenant";
+      }
+    } catch (err) {
+      const msg =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        "Google registration/login failed";
+      setError(msg);
+    }
+  };
+
+  // Init Google button; re-run when role changes so callback uses latest role
+  useEffect(() => {
+    try {
+      const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
+      if (!clientId || typeof window === "undefined") return;
+      if (!window.google || !googleDivRef.current) return;
+
+      googleDivRef.current.innerHTML = "";
+
+      const callback = (response) =>
+        handleGoogleCredential(response, form.role);
+
+      window.google.accounts.id.initialize({
+        client_id: clientId,
+        callback,
+      });
+
+      window.google.accounts.id.renderButton(googleDivRef.current, {
+        theme: "outline",
+        size: "large",
+        shape: "rectangular",
+        text: "continue_with",
+        width: 240, // number to avoid warning
+      });
+    } catch (e) {
+      console.error("Google register init error:", e);
+    }
+  }, [form.role]);
 
   return (
     <div className="auth-page">
@@ -51,22 +126,19 @@ export default function Register() {
         </p>
 
         {error && <div className="alert error">{error}</div>}
-        {success && <div className="alert success">{success}</div>}
 
         <form onSubmit={handleSubmit} className="auth-form">
-          {/* NAME */}
           <label className="field-label">Full Name</label>
           <input
             className="input"
             type="text"
             name="name"
-            placeholder="John Doe"
             value={form.name}
             onChange={handleChange}
+            placeholder="John Doe"
             required
           />
 
-          {/* EMAIL */}
           <label className="field-label">Email</label>
           <input
             className="input"
@@ -78,7 +150,6 @@ export default function Register() {
             required
           />
 
-          {/* PASSWORD */}
           <label className="field-label">Password</label>
           <input
             className="input"
@@ -86,45 +157,42 @@ export default function Register() {
             name="password"
             value={form.password}
             onChange={handleChange}
+            placeholder="••••••••"
             required
           />
 
-          {/* ROLE */}
           <label className="field-label">Role</label>
           <select
             className="input"
             name="role"
             value={form.role}
             onChange={handleChange}
-            required
           >
+            <option value="">Select role...</option>
             <option value="LANDLORD">Landlord</option>
-            <option value="TENANT">Tenant</option> 
+            <option value="TENANT">Tenant</option>
           </select>
-
-          {/* PHONE (only show if TENANT) */}
-          {form.role === "TENANT" && (
-            <>
-              <label className="field-label">Phone (optional)</label>
-              <input
-                className="input"
-                type="tel"
-                name="phone"
-                placeholder="647-123-4567"
-                value={form.phone}
-                onChange={handleChange}
-              />
-            </>
-          )}
 
           <button className="btn-primary" type="submit" disabled={loading}>
             {loading ? "Creating account..." : "Register"}
           </button>
         </form>
 
+        <div style={{ textAlign: "center", margin: "1rem 0" }}>
+          <span style={{ color: "#777" }}>or</span>
+        </div>
+
+        {/* Google register/login button (only works if Google configured) */}
+        <div
+          ref={googleDivRef}
+          style={{ display: "flex", justifyContent: "center" }}
+        ></div>
+
         <p className="auth-footer">
           Already have an account?{" "}
-          <Link to="/login" className="link">Login</Link>
+          <Link to="/login" className="link">
+            Login
+          </Link>
         </p>
       </div>
     </div>

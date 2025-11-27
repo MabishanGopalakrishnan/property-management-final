@@ -1,4 +1,5 @@
 // backend/src/controllers/paymentController.js
+import "dotenv/config";
 import stripe from "stripe";
 import {
   getTenantPayments,
