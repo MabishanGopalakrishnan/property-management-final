@@ -1,20 +1,16 @@
-// src/api/auth.js
-import API from "./axiosConfig";
+import API from "./axiosConfig.js";
 
-// LOGIN
-export const loginRequest = async (credentials) => {
-  const res = await API.post("/auth/login", credentials); // 👈 FIXED
+export const loginRequest = async (form) => {
+  const res = await API.post("/auth/login", form);
   return res.data;
 };
 
-// REGISTER
-export const registerRequest = async (data) => {
-  const res = await API.post("/auth/register", data); // 👈 FIXED
+export const registerRequest = async (form) => {
+  const res = await API.post("/auth/register", form);
   return res.data;
 };
 
-// GET AUTH USER DATA
 export const getMe = async () => {
-  const res = await API.get("/auth/me"); // 👈 FIXED
+  const res = await API.get("/auth/me");
   return res.data;
 };

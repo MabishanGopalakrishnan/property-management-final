@@ -1,20 +1,10 @@
-// frontend/src/pages/Login.jsx
 import { useState } from "react";
-<<<<<<< HEAD
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-=======
-import { useNavigate, Link } from "react-router-dom";
-import { GoogleLogin } from "@react-oauth/google";
-import API from "../api/axiosConfig.js";
 import { useAuth } from "../context/AuthContext.jsx";
->>>>>>> 1b23df24c03b6decf4a406c79c06e32b2dcd0df2
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login } = useAuth();
-<<<<<<< HEAD
-  const navigate = useNavigate();
+  const { login: authLogin } = useAuth();
 
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
@@ -30,68 +20,63 @@ export default function Login() {
     setLoading(true);
 
     try {
-      await login(form.email, form.password);
-      // login() already navigates, no need to do it again
-=======
-
-  const [role, setRole] = useState("LANDLORD");
-  const [error, setError] = useState("");
-
-  const handleGoogleSuccess = async (credentialResponse) => {
-    try {
-      setError("");
-
-      const idToken = credentialResponse.credential;
-
-      const res = await API.post("/auth/google", {
-        idToken,
-        role, // LANDLORD or TENANT
-      });
-
-      // res.data should be { user, token }
-      login(res.data.token, res.data.user);
-
-      navigate("/dashboard");
->>>>>>> 1b23df24c03b6decf4a406c79c06e32b2dcd0df2
+      const user = await authLogin(form);
+      if (user.role === "LANDLORD") {
+        navigate("/dashboard");
+      } else {
+        navigate("/tenant");
+      }
     } catch (err) {
-      console.log("GOOGLE LOGIN ERROR:", err.response?.data || err.message);
-      setError(err.response?.data?.message || "Google login failed.");
+      console.error("LOGIN ERROR:", err.response?.data || err.message);
+      setError(err.response?.data?.error || err.message || "Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleGoogleError = () => {
-    setError("Google login failed.");
-  };
-
   return (
-    <div style={{ maxWidth: 420, margin: "60px auto" }}>
-      <h1>Login</h1>
+    <div className="auth-page">
+      <div className="auth-card">
+        <h1 className="auth-title">Login</h1>
+        <p className="auth-subtitle">
+          Sign in to manage properties, tenants, and payments.
+        </p>
 
-      {error && (
-        <div style={{ color: "red", marginBottom: 12 }}>
-          {error}
-        </div>
-      )}
+        {error && <div className="alert error">{error}</div>}
 
-      <label>Login as</label>
-      <select
-        value={role}
-        onChange={(e) => setRole(e.target.value)}
-        style={{ width: "100%", marginBottom: 20 }}
-      >
-        <option value="LANDLORD">Landlord</option>
-        <option value="TENANT">Tenant</option>
-      </select>
+        <form onSubmit={handleSubmit} className="auth-form">
+          <label className="field-label">Email</label>
+          <input
+            className="input"
+            type="email"
+            name="email"
+            value={form.email}
+            onChange={handleChange}
+            placeholder="you@example.com"
+            required
+          />
 
-      <GoogleLogin
-        onSuccess={handleGoogleSuccess}
-        onError={handleGoogleError}
-        useOneTap
-      />
+          <label className="field-label">Password</label>
+          <input
+            className="input"
+            type="password"
+            name="password"
+            value={form.password}
+            onChange={handleChange}
+            placeholder="••••••••"
+            required
+          />
 
-      <p style={{ marginTop: 16 }}>
-        Need an account? <Link to="/register">Register</Link>
-      </p>
+          <button className="btn-primary" type="submit" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
+          </button>
+        </form>
+
+        <p className="auth-footer">
+          Don't have an account?{" "}
+          <Link to="/register" className="link">Register</Link>
+        </p>
+      </div>
     </div>
   );
 }

@@ -13,39 +13,21 @@ const navLinkStyle = ({ isActive }) => ({
 });
 
 export default function Navbar() {
-<<<<<<< HEAD
   const { user, logout } = useAuth();
   if (!user) return null; // no navbar when logged out
 
   const isManager = user.role === "LANDLORD";
   const isTenant = user.role === "TENANT";
-=======
-  const { user, logout: appLogout } = useAuth();
-
-  const handleLogout = () => {
-    // Clear Google session
-    googleLogout();
-
-    // Clear app JWT + context
-    appLogout();
-  };
->>>>>>> 1b23df24c03b6decf4a406c79c06e32b2dcd0df2
 
   return (
     <header className="navbar">
       <div className="navbar-left">
-<<<<<<< HEAD
         <span className="brand">
           {isManager ? "Retro Property Manager" : "Tenant Portal"}
         </span>
 
         {/* MANAGER NAVIGATION */}
         {isManager && (
-=======
-        <span className="brand">Property Manager</span>
-
-        {user && (
->>>>>>> 1b23df24c03b6decf4a406c79c06e32b2dcd0df2
           <nav>
             <NavLink to="/dashboard" style={navLinkStyle}>
               Dashboard
@@ -103,7 +85,6 @@ export default function Navbar() {
         )}
       </div>
 
-<<<<<<< HEAD
       {/* USER INFO + LOGOUT */}
       <div className="navbar-right">
         <span className="navbar-user">{user.email}</span>
@@ -111,16 +92,6 @@ export default function Navbar() {
           Logout
         </button>
       </div>
-=======
-      {user && (
-        <div className="navbar-right">
-          <span className="navbar-user">{user.email}</span>
-          <button className="btn-outline" onClick={handleLogout}>
-            Logout
-          </button>
-        </div>
-      )}
->>>>>>> 1b23df24c03b6decf4a406c79c06e32b2dcd0df2
     </header>
   );
 }
