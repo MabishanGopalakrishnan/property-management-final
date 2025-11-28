@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
-import api from "../api/axiosConfig.js";
+import api from "../api/axiosConfig";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -11,13 +11,10 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const googleDivRef = useRef(null);
-
   const handleChange = (e) => {
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
   };
 
-  // Manual login – original behaviour
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -31,66 +28,104 @@ export default function Login() {
         navigate("/tenant");
       }
     } catch (err) {
+      console.error("LOGIN ERROR:", err.response?.data || err.message);
       setError(err.response?.data?.error || err.message || "Login failed");
     } finally {
       setLoading(false);
     }
   };
 
-  // Google login (existing accounts only)
-  const handleGoogleCredential = async (response) => {
-    try {
-      setError("");
+  // ---------- GOOGLE LOGIN ----------
 
-      const res = await api.post("/auth/google", {
-        credential: response.credential,
-      });
+  const handleGoogleLogin = useCallback(
+    async (response) => {
+      try {
+        setError("");
+        setLoading(true);
 
-      const { token, user } = res.data;
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
+        const credential = response?.credential;
+        if (!credential) {
+          throw new Error("Missing Google credential");
+        }
 
-      // Hard reload so AuthContext re-reads token from localStorage
-      if (user.role === "LANDLORD") {
-        window.location.href = "/dashboard";
-      } else {
-        window.location.href = "/tenant";
+        // Send Google token to backend
+        const res = await api.post("/auth/google", {
+          credential,
+          mode: "login",
+        });
+
+        const data = res.data;
+
+        // Save token/user (adjust to match what your backend returns)
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+        }
+        if (data.user) {
+          localStorage.setItem("user", JSON.stringify(data.user));
+        }
+
+        const role = data.user?.role || "TENANT";
+        const redirect = role === "LANDLORD" ? "/dashboard" : "/tenant";
+
+        // Full reload so AuthContext picks up the new token/user everywhere
+        window.location.href = redirect;
+      } catch (err) {
+        console.error("Google login error:", err.response?.data || err.message);
+        setError(
+          err.response?.data?.message ||
+            err.message ||
+            "Google registration/login failed"
+        );
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      const msg =
-        err.response?.data?.message ||
-        err.response?.data?.error ||
-        "Google sign-in failed";
-      setError(msg);
-    }
-  };
+    },
+    []
+  );
 
   useEffect(() => {
-    try {
-      const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    if (!clientId) {
+      console.warn("VITE_GOOGLE_CLIENT_ID is not set");
+      return;
+    }
 
-      // If Google isn't set up, just don't render the button
-      if (!clientId || typeof window === "undefined") return;
-      if (!window.google || !googleDivRef.current) return;
+    let interval;
 
-      googleDivRef.current.innerHTML = "";
+    const initGoogle = () => {
+      if (!window.google?.accounts?.id) return false;
 
       window.google.accounts.id.initialize({
         client_id: clientId,
-        callback: handleGoogleCredential,
+        callback: handleGoogleLogin,
       });
 
-      window.google.accounts.id.renderButton(googleDivRef.current, {
-        theme: "outline",
-        size: "large",
+      const btn = document.getElementById("google-login-btn");
+      if (!btn) return false;
+
+      window.google.accounts.id.renderButton(btn, {
+        type: "standard",
         shape: "rectangular",
+        theme: "outline",
         text: "continue_with",
-        width: 240, // number to avoid the "invalid width" warning
+        width: "100%",
       });
-    } catch (e) {
-      console.error("Google login init error:", e);
-    }
-  }, []);
+
+      return true;
+    };
+
+    // Poll until the Google script is ready and the element exists
+    interval = setInterval(() => {
+      const ok = initGoogle();
+      if (ok) clearInterval(interval);
+    }, 500);
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [handleGoogleLogin]);
+
+  // ---------- UI ----------
 
   return (
     <div className="auth-page">
@@ -130,18 +165,13 @@ export default function Login() {
           </button>
         </form>
 
-        <div style={{ textAlign: "center", margin: "1rem 0" }}>
-          <span style={{ color: "#777" }}>or</span>
-        </div>
+        <p className="auth-or">or</p>
 
-        {/* Google login button – only appears if Google is configured */}
-        <div
-          ref={googleDivRef}
-          style={{ display: "flex", justifyContent: "center" }}
-        ></div>
+        {/* Google login button mounts here */}
+        <div id="google-login-btn" style={{ width: "100%" }}></div>
 
         <p className="auth-footer">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link to="/register" className="link">
             Register
           </Link>

@@ -1,120 +1,162 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext.jsx";
-import api from "../api/axiosConfig.js";
+import api from "../api/axiosConfig";
 
 export default function Register() {
   const navigate = useNavigate();
-  const { register: authRegister } = useAuth();
 
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
-    role: "", // user must pick
+    role: "",
   });
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const googleDivRef = useRef(null);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((f) => ({ ...f, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Manual registration – original behaviour
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-
-    if (!form.role) {
-      setError("Please select a role (Landlord or Tenant).");
-      return;
-    }
-
     setLoading(true);
 
     try {
-      const user = await authRegister(form);
-      if (user.role === "LANDLORD") {
-        navigate("/dashboard");
-      } else {
-        navigate("/tenant");
+      if (!form.role) {
+        throw new Error("Please select a role (Landlord or Tenant).");
       }
+
+      const res = await api.post("/auth/register", {
+        name: form.name,
+        email: form.email,
+        password: form.password,
+        role: form.role.toUpperCase(), // LANDLORD / TENANT
+      });
+
+      const data = res.data;
+
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
+      if (data.user) {
+        localStorage.setItem("user", JSON.stringify(data.user));
+      }
+
+      const role = data.user?.role || form.role.toUpperCase();
+      const redirect = role === "LANDLORD" ? "/dashboard" : "/tenant";
+
+      window.location.href = redirect;
     } catch (err) {
+      console.error("REGISTER ERROR:", err.response?.data || err.message);
       setError(
-        err.response?.data?.error || err.message || "Registration failed"
+        err.response?.data?.message ||
+          err.response?.data?.error ||
+          err.message ||
+          "Registration failed"
       );
     } finally {
       setLoading(false);
     }
   };
 
-  // Google register/login – uses latest role
-  const handleGoogleCredential = async (response, roleFromUI) => {
-    try {
-      setError("");
+  // ---------- GOOGLE REGISTER ----------
 
-      const role = (roleFromUI || "").trim();
-      if (!role) {
-        setError("Please select a role above before using Google.");
-        return;
+  const handleGoogleRegister = useCallback(
+    async (response) => {
+      try {
+        setError("");
+        setLoading(true);
+
+        if (!form.role) {
+          throw new Error(
+            "Please select a role (Landlord or Tenant) before using Google."
+          );
+        }
+
+        const credential = response?.credential;
+        if (!credential) {
+          throw new Error("Missing Google credential");
+        }
+
+        const res = await api.post("/auth/google", {
+          credential,
+          mode: "register",
+          role: form.role.toUpperCase(),
+        });
+
+        const data = res.data;
+
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+        }
+        if (data.user) {
+          localStorage.setItem("user", JSON.stringify(data.user));
+        }
+
+        const role = data.user?.role || form.role.toUpperCase();
+        const redirect = role === "LANDLORD" ? "/dashboard" : "/tenant";
+
+        window.location.href = redirect;
+      } catch (err) {
+        console.error("Google register error:", err.response?.data || err.message);
+        setError(
+          err.response?.data?.message ||
+            err.message ||
+            "Google registration/login failed"
+        );
+      } finally {
+        setLoading(false);
       }
+    },
+    [form.role]
+  );
 
-      const res = await api.post("/auth/google", {
-        credential: response.credential,
-        role,
-      });
-
-      const { token, user } = res.data;
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
-
-      // Hard reload so AuthContext re-reads token from localStorage
-      if (user.role === "LANDLORD") {
-        window.location.href = "/dashboard";
-      } else {
-        window.location.href = "/tenant";
-      }
-    } catch (err) {
-      const msg =
-        err.response?.data?.message ||
-        err.response?.data?.error ||
-        "Google registration/login failed";
-      setError(msg);
-    }
-  };
-
-  // Init Google button; re-run when role changes so callback uses latest role
   useEffect(() => {
-    try {
-      const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    if (!clientId) {
+      console.warn("VITE_GOOGLE_CLIENT_ID is not set");
+      return;
+    }
 
-      if (!clientId || typeof window === "undefined") return;
-      if (!window.google || !googleDivRef.current) return;
+    let interval;
 
-      googleDivRef.current.innerHTML = "";
-
-      const callback = (response) =>
-        handleGoogleCredential(response, form.role);
+    const initGoogle = () => {
+      if (!window.google?.accounts?.id) return false;
 
       window.google.accounts.id.initialize({
         client_id: clientId,
-        callback,
+        callback: handleGoogleRegister,
       });
 
-      window.google.accounts.id.renderButton(googleDivRef.current, {
-        theme: "outline",
-        size: "large",
+      const btn = document.getElementById("google-register-btn");
+      if (!btn) return false;
+
+      window.google.accounts.id.renderButton(btn, {
+        type: "standard",
         shape: "rectangular",
+        theme: "outline",
         text: "continue_with",
-        width: 240, // number to avoid warning
+        width: "100%",
       });
-    } catch (e) {
-      console.error("Google register init error:", e);
-    }
-  }, [form.role]);
+
+      return true;
+    };
+
+    interval = setInterval(() => {
+      const ok = initGoogle();
+      if (ok) clearInterval(interval);
+    }, 500);
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [handleGoogleRegister]);
+
+  // ---------- UI ----------
 
   return (
     <div className="auth-page">
@@ -167,6 +209,7 @@ export default function Register() {
             name="role"
             value={form.role}
             onChange={handleChange}
+            required
           >
             <option value="">Select role...</option>
             <option value="LANDLORD">Landlord</option>
@@ -178,15 +221,10 @@ export default function Register() {
           </button>
         </form>
 
-        <div style={{ textAlign: "center", margin: "1rem 0" }}>
-          <span style={{ color: "#777" }}>or</span>
-        </div>
+        <p className="auth-or">or</p>
 
-        {/* Google register/login button (only works if Google configured) */}
-        <div
-          ref={googleDivRef}
-          style={{ display: "flex", justifyContent: "center" }}
-        ></div>
+        {/* Google register button mounts here */}
+        <div id="google-register-btn" style={{ width: "100%" }}></div>
 
         <p className="auth-footer">
           Already have an account?{" "}
