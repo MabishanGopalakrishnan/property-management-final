@@ -1,6 +1,7 @@
 // src/layouts/TenantLayout.jsx
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
+import Logo from "../components/Logo";
 
 export default function TenantLayout({ children }) {
   const { user, logout } = useAuth();
@@ -18,7 +19,9 @@ export default function TenantLayout({ children }) {
     <div className="tenant-shell">
       <header className="tenant-header">
         <div className="tenant-header-left">
-          <span className="tenant-brand">My Home Portal</span>
+          <Link to="/tenant" style={{ textDecoration: 'none' }}>
+            <Logo size="small" variant="full" />
+          </Link>
           <nav className="tenant-nav">
             {navItems.map((item) => (
               <Link

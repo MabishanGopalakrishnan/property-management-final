@@ -14,6 +14,8 @@ import authRoutes from "./src/routes/authRoutes.js";
 // if you have webhook routes, keep this, otherwise you can comment it out:
 import webhookRoutes from "./src/routes/webhookRoutes.js";
 import tenantRoutes from "./src/routes/tenantRoutes.js";
+import tenantPortalRoutes from "./src/routes/tenantPortalRoutes.js";
+import dashboardRoutes from "./src/routes/dashboardRoutes.js";
 
 dotenv.config();
 
@@ -40,6 +42,8 @@ app.use("/api/leases", leaseRoutes);
 app.use("/api/maintenance", maintenanceRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/tenants", tenantRoutes);
+app.use("/api/tenant", tenantPortalRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 // Health check
 app.get("/", (req, res) => {

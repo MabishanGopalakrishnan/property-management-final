@@ -1,4 +1,16 @@
 services:
+  db:
+    image: postgres:15
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: property_user
+      POSTGRES_PASSWORD: property_pass
+      POSTGRES_DB: property_management
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
   backend:
     build:
       context: ./backend
@@ -7,6 +19,8 @@ services:
       - "5000:5000"          # host:container
     env_file:
       - ./backend/.env       # uses your existing backend .env
+    depends_on:
+      - db
     # If you want logs during dev, you can add:
     # command: ["npm", "run", "dev"]
 
@@ -18,3 +32,6 @@ services:
       - "5173:80"            # browser hits http://localhost:5173
     depends_on:
       - backend
+
+volumes:
+  postgres_data:

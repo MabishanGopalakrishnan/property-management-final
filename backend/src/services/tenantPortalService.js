@@ -340,3 +340,36 @@ export async function createTenantMaintenanceRequestService(userId, data) {
 
   return request;
 }
+
+// ---------- UPLOAD MAINTENANCE PHOTO ----------
+export async function uploadTenantMaintenancePhotoService(userId, requestId, file) {
+  const tenant = await getTenantOrThrow(userId);
+
+  // Verify the maintenance request belongs to this tenant
+  const request = await prisma.maintenanceRequest.findFirst({
+    where: {
+      id: requestId,
+      lease: {
+        tenantId: tenant.id,
+      },
+    },
+  });
+
+  if (!request) {
+    throw new Error("Maintenance request not found or you don't have permission.");
+  }
+
+  // Build photo URL
+  const photoUrl = `/uploads/maintenance/${file.filename}`;
+
+  // Add photo to the request
+  const currentPhotos = request.photos || [];
+  const updatedPhotos = [...currentPhotos, photoUrl];
+
+  const updated = await prisma.maintenanceRequest.update({
+    where: { id: requestId },
+    data: { photos: updatedPhotos },
+  });
+
+  return updated;
+}

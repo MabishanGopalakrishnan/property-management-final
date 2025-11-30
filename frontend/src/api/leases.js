@@ -23,4 +23,10 @@ export const getLeasesByUnit = async (unitId) => {
 export const deleteLease = async (leaseId) => {
   const res = await API.delete(`/leases/${leaseId}`);
   return res.data;
-}
+};
+
+// Update lease
+export const updateLease = async (leaseId, data) => {
+  const res = await API.put(`/leases/${leaseId}`, data);
+  return res.data;
+};

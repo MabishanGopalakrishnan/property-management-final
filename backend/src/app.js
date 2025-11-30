@@ -7,16 +7,17 @@ import dotenv from "dotenv";
 
 
 
-import propertyRoutes from "./src/routes/propertyRoutes.js";
-import unitRoutes from "./src/routes/unitRoutes.js";
-import leaseRoutes from "./src/routes/leaseRoutes.js";
-import maintenanceRoutes from "./src/routes/maintenanceRoutes.js";
-import paymentRoutes from "./src/routes/paymentRoutes.js";
-import authRoutes from "./src/routes/authRoutes.js";
-import tenantRoutes from "./src/routes/tenantRoutes.js";
-import webhookRoutes from "./src/routes/webhookRoutes.js";
-import tenantPortalRoutes from "./src/routes/tenantPortalRoutes.js";
-import startSyncJob from "./src/tasks/syncPaymentsJob.js";
+import propertyRoutes from "./routes/propertyRoutes.js";
+import unitRoutes from "./routes/unitRoutes.js";
+import leaseRoutes from "./routes/leaseRoutes.js";
+import maintenanceRoutes from "./routes/maintenanceRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
+import tenantRoutes from "./routes/tenantRoutes.js";
+import webhookRoutes from "./routes/webhookRoutes.js";
+import tenantPortalRoutes from "./routes/tenantPortalRoutes.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
+import startSyncJob from "./tasks/syncPaymentsJob.js";
 
 
 
@@ -42,6 +43,8 @@ app.use("/api/leases", leaseRoutes);
 app.use("/api/maintenance", maintenanceRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/tenant", tenantPortalRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+console.log('✅ Dashboard routes mounted at /api/dashboard');
 
 
 // Health check

@@ -146,6 +146,8 @@ model MaintenanceRequest {
   description String?
   status      MaintenanceStatus   @default(PENDING)
   priority    MaintenancePriority @default(MEDIUM)
+  contractor  String?
+  photos      String[]            @default([])
 
   leaseId Int
   lease   Lease @relation(fields: [leaseId], references: [id])

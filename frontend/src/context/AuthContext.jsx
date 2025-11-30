@@ -54,7 +54,7 @@ const login = async (form) => {
     setUser(null);
   };
 
-  const value = { user, loading, login, register, logout };
+  const value = { user, setUser, loading, login, register, logout };
 
   if (loading) return <p className="text-center mt-10">Loading...</p>;
 

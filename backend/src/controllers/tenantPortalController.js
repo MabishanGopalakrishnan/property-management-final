@@ -6,7 +6,8 @@ import {
   getTenantLeaseService,
   getTenantPaymentsService,
   getTenantMaintenanceService,
-  createTenantMaintenanceRequestService
+  createTenantMaintenanceRequestService,
+  uploadTenantMaintenancePhotoService
 } from "../services/tenantPortalService.js";
 
 // Overview
@@ -85,6 +86,24 @@ export async function createTenantMaintenance(req, res) {
     res.status(201).json(data);
   } catch (err) {
     console.error("createTenantMaintenance error:", err);
+    res.status(400).json({ error: err.message });
+  }
+}
+
+// Upload photo to maintenance request
+export async function uploadTenantMaintenancePhoto(req, res) {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No photo file provided." });
+    }
+    const data = await uploadTenantMaintenancePhotoService(
+      req.user.id,
+      Number(req.params.id),
+      req.file
+    );
+    res.json(data);
+  } catch (err) {
+    console.error("uploadTenantMaintenancePhoto error:", err);
     res.status(400).json({ error: err.message });
   }
 }

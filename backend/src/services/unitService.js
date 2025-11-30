@@ -7,17 +7,24 @@ export const createUnitService = async (landlordId, propertyId, data) => {
   });
   if (!prop) throw new Error("Property not found or not yours.");
 
+  const unitData = {
+    unitNumber: data.unitNumber,
+    propertyId: Number(propertyId),
+  };
+
+  // Only include optional fields if they are provided
+  if (data.bedrooms !== undefined && data.bedrooms !== null) {
+    unitData.bedrooms = Number(data.bedrooms);
+  }
+  if (data.bathrooms !== undefined && data.bathrooms !== null) {
+    unitData.bathrooms = Number(data.bathrooms);
+  }
+  if (data.rentAmount !== undefined && data.rentAmount !== null && data.rentAmount !== '') {
+    unitData.rentAmount = Number(data.rentAmount);
+  }
+
   return prisma.unit.create({
-    data: {
-      unitNumber: data.unitNumber,
-      propertyId: Number(propertyId),
-      bedrooms:
-        data.bedrooms !== undefined ? Number(data.bedrooms) : null,
-      bathrooms:
-        data.bathrooms !== undefined ? Number(data.bathrooms) : null,
-      rentAmount:
-        data.rentAmount !== undefined ? Number(data.rentAmount) : null,
-    },
+    data: unitData,
   });
 };
 

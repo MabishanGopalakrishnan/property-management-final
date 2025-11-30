@@ -22,7 +22,7 @@ export const listProperties = async (req, res) => {
 export const getPropertyById = async (req, res) => {
   try {
     const landlordId = req.user.id;
-    const id = parseInt(req.params.id, 10);
+    const id = parseInt(req.params.propertyId, 10);
 
     const property = await getPropertyByIdService(landlordId, id);
     if (!property) {
@@ -69,7 +69,7 @@ export const createProperty = async (req, res) => {
 export const updateProperty = async (req, res) => {
   try {
     const landlordId = req.user.id;
-    const id = parseInt(req.params.id, 10);
+    const id = parseInt(req.params.propertyId, 10);
 
     const updated = await updatePropertyService(landlordId, id, req.body);
     return res.json(updated);
@@ -83,7 +83,7 @@ export const updateProperty = async (req, res) => {
 export const deleteProperty = async (req, res) => {
   try {
     const landlordId = req.user.id;
-    const id = parseInt(req.params.id, 10);
+    const id = parseInt(req.params.propertyId, 10);
 
     const deleted = await deletePropertyService(landlordId, id);
     return res.json(deleted);

@@ -74,3 +74,15 @@ export const createTenantMaintenance = async (data) => {
   const res = await API.post("/tenants/maintenance", data);
   return res.data;
 };
+
+// ------- Upload Tenant Maintenance Photo -------
+export const uploadTenantMaintenancePhoto = async (id, file) => {
+  const form = new FormData();
+  form.append("photo", file);
+
+  const res = await API.post(`/tenants/maintenance/${id}/photo`, form, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+
+  return res.data;
+};

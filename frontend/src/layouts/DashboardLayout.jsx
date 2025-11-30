@@ -1,11 +1,14 @@
 import { Link, Outlet } from "react-router-dom";
+import Logo from "../components/Logo";
 
 export default function DashboardLayout() {
   return (
     <div className="min-h-screen bg-[#111] text-white">
       {/* TOP NAVBAR */}
       <nav className="w-full bg-[#1a1a1a] px-8 py-4 flex items-center justify-between border-b border-gray-700">
-        <div className="text-xl font-bold">Property Manager</div>
+        <Link to="/dashboard" style={{ textDecoration: 'none' }}>
+          <Logo size="small" variant="full" />
+        </Link>
 
         <div className="flex items-center gap-6">
           <Link to="/dashboard" className="hover:text-cyan-300">Home</Link>

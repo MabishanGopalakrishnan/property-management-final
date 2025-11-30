@@ -57,10 +57,16 @@ export const updatePropertyService = async (landlordId, id, data) => {
 export const deletePropertyService = async (landlordId, id) => {
   const existing = await prisma.property.findFirst({
     where: { id, landlordId },
+    include: { units: true },
   });
 
   if (!existing) {
     throw new Error("Property not found or not yours.");
+  }
+
+  // Check if property has any units
+  if (existing.units && existing.units.length > 0) {
+    throw new Error("Cannot delete property with existing units. Please delete all units first.");
   }
 
   return prisma.property.delete({
