@@ -5,7 +5,6 @@ import {
   getMyPayments,
   getLandlordPayments,
   payPayment,
-  syncPayments,
 } from "../api/payments";
 import { DollarSign, Calendar, TrendingUp, AlertCircle, CheckCircle } from "lucide-react";
 
@@ -39,7 +38,6 @@ export default function Payments() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [syncMessage, setSyncMessage] = useState("");
 
   const load = async () => {
     if (!user) return;
@@ -79,7 +77,7 @@ export default function Payments() {
   };
 
   // Calculate KPIs
-  const totalPayments = payments.reduce((sum, p) => sum + (p.amount || 0), 0);
+  const totalPayments = payments.filter(p => p.status === "PAID").reduce((sum, p) => sum + (p.amount || 0), 0);
   const paidPayments = payments.filter(p => p.status === "PAID").reduce((sum, p) => sum + (p.amount || 0), 0);
   const pendingPayments = payments.filter(p => {
     const status = computeStatus(p);
@@ -135,20 +133,6 @@ export default function Payments() {
           animation: 'slideIn 0.5s ease-out'
         }}>
           {error}
-        </div>
-      )}
-
-      {syncMessage && (
-        <div style={{
-          padding: '1rem',
-          background: 'rgba(16,185,129,0.15)',
-          border: '1px solid rgba(16,185,129,0.3)',
-          borderRadius: '12px',
-          color: '#10b981',
-          marginBottom: '1.5rem',
-          animation: 'slideIn 0.5s ease-out'
-        }}>
-          {syncMessage}
         </div>
       )}
 
@@ -389,58 +373,6 @@ export default function Payments() {
             </div>
           </div>
         </div>
-      )}
-
-      {/* Sync Button for Landlords */}
-      {isLandlord && (
-        <button
-          onClick={async () => {
-            try {
-              setLoading(true);
-              setError("");
-              const resp = await syncPayments();
-              await load();
-              const updated = resp?.result?.updated ?? 0;
-              setSyncMessage(`${updated} payment(s) updated`);
-              setTimeout(() => setSyncMessage(""), 4000);
-            } catch (err) {
-              console.error(err);
-              setError("Failed to sync payments with Stripe.");
-            } finally {
-              setLoading(false);
-            }
-          }}
-          disabled={loading}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            padding: '0.875rem 1.5rem',
-            background: 'rgba(6,182,212,0.15)',
-            border: '2px solid rgba(6,182,212,0.3)',
-            borderRadius: '12px',
-            color: '#06b6d4',
-            cursor: loading ? 'not-allowed' : 'pointer',
-            fontSize: '0.95rem',
-            fontWeight: '600',
-            marginBottom: '2rem',
-            transition: 'all 0.3s ease',
-            opacity: loading ? 0.5 : 1
-          }}
-          onMouseEnter={(e) => {
-            if (!loading) {
-              e.target.style.background = 'rgba(6,182,212,0.25)';
-              e.target.style.transform = 'translateY(-2px)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.background = 'rgba(6,182,212,0.15)';
-            e.target.style.transform = 'translateY(0)';
-          }}
-        >
-          <Calendar size={20} />
-          {loading ? 'Syncing...' : 'Sync Payments with Stripe'}
-        </button>
       )}
 
       {/* Payments Table */}

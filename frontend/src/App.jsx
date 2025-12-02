@@ -11,6 +11,7 @@ import Units from "./pages/Units.jsx";
 import Payments from "./pages/Payments.jsx";
 import Maintenance from "./pages/Maintenance.jsx";
 import Leases from "./pages/Leases.jsx";
+import Tenants from "./pages/Tenants.jsx";
 import PaymentsAnalytics from "./pages/PaymentsAnalytics.jsx";
 import NotFound from "./pages/NotFound.jsx";
 
@@ -109,6 +110,17 @@ export default function App() {
           <PrivateRoute>
             <LandlordLayout>
               <Leases />
+            </LandlordLayout>
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/tenants"
+        element={
+          <PrivateRoute>
+            <LandlordLayout>
+              <Tenants />
             </LandlordLayout>
           </PrivateRoute>
         }

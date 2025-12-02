@@ -39,8 +39,8 @@ export default function Register() {
 
       const data = res.data;
 
-      if (data.token) {
-        localStorage.setItem("token", data.token);
+      if (data.access_token) {
+        localStorage.setItem("token", data.access_token);
       }
       if (data.user) {
         localStorage.setItem("user", JSON.stringify(data.user));

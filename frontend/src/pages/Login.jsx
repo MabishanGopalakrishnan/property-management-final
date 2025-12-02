@@ -81,8 +81,8 @@ export default function Login() {
         const data = res.data;
 
         // Save token/user (adjust to match what your backend returns)
-        if (data.token) {
-          localStorage.setItem("token", data.token);
+        if (data.access_token) {
+          localStorage.setItem("token", data.access_token);
         }
         if (data.user) {
           localStorage.setItem("user", JSON.stringify(data.user));
@@ -127,7 +127,7 @@ export default function Login() {
           {
             theme: "filled_blue",
             size: "large",
-            width: "100%",
+            width: 400, // Fixed pixel value instead of percentage
             text: "continue_with",
           }
         );

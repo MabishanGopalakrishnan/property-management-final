@@ -33,54 +33,78 @@
 // src/api/tenantPortal.js
 import API from "./axiosConfig";
 
-// ------- Tenant Overview -------
-export const getTenantOverview = async () => {
-  const res = await API.get("/tenants/overview");
-  return res.data; // { tenant, lease, payments, maintenance }
-};
-
-// ------- Tenant Properties -------
-export const getTenantProperties = async () => {
-  const res = await API.get("/tenants/properties");
-  return res.data; // array
-};
-
-// ------- Tenant Units (if you ever use it) -------
-export const getTenantUnits = async () => {
-  const res = await API.get("/tenants/units");
-  return res.data;
-};
-
-// ------- Tenant Lease -------
+// ------- Tenant Leases -------
 export const getTenantLease = async () => {
-  const res = await API.get("/tenants/lease");
+  const res = await API.get("/tenant-portal/my-leases");
   return res.data; // array of leases
 };
 
 // ------- Tenant Payments -------
 export const getTenantPayments = async () => {
-  const res = await API.get("/tenants/payments");
+  const res = await API.get("/tenant-portal/my-payments");
   return res.data;
 };
 
 // ------- Tenant Maintenance List -------
 export const getTenantMaintenance = async () => {
-  const res = await API.get("/tenants/maintenance");
+  const res = await API.get("/tenant-portal/my-maintenance");
   return res.data;
+};
+
+// ------- Tenant Overview (combine data from multiple endpoints) -------
+export const getTenantOverview = async () => {
+  try {
+    const [leases, payments, maintenance] = await Promise.all([
+      getTenantLease(),
+      getTenantPayments(),
+      getTenantMaintenance()
+    ]);
+    
+    return {
+      leases,
+      payments,
+      maintenance
+    };
+  } catch (error) {
+    console.error('Error fetching tenant overview:', error);
+    throw error;
+  }
+};
+
+// ------- Tenant Properties (from leases) -------
+export const getTenantProperties = async () => {
+  const leases = await getTenantLease();
+  // Extract unique properties from leases
+  const properties = leases
+    .filter(lease => lease.unit && lease.unit.property)
+    .map(lease => lease.unit.property)
+    .filter((property, index, self) => 
+      index === self.findIndex(p => p.id === property.id)
+    );
+  return properties;
+};
+
+// ------- Tenant Units (from leases) -------
+export const getTenantUnits = async () => {
+  const leases = await getTenantLease();
+  const units = leases
+    .filter(lease => lease.unit)
+    .map(lease => lease.unit);
+  return units;
 };
 
 // ------- CREATE Maintenance Request -------
 export const createTenantMaintenance = async (data) => {
-  const res = await API.post("/tenants/maintenance", data);
+  const res = await API.post("/maintenance/", data);
   return res.data;
 };
 
 // ------- Upload Tenant Maintenance Photo -------
 export const uploadTenantMaintenancePhoto = async (id, file) => {
   const form = new FormData();
-  form.append("photo", file);
+  form.append("files", file);
 
-  const res = await API.post(`/tenants/maintenance/${id}/photo`, form, {
+  const res = await API.post(`/maintenance/${id}/photos`, form, {
     headers: { "Content-Type": "multipart/form-data" },
   });
 

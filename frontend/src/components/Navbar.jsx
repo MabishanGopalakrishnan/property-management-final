@@ -45,6 +45,10 @@ export default function Navbar() {
               Leases
             </NavLink>
 
+            <NavLink to="/tenants" style={navLinkStyle}>
+              Tenants
+            </NavLink>
+
             <NavLink to="/payments" style={navLinkStyle}>
               Payments
             </NavLink>

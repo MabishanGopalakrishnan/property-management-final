@@ -1,3 +1,10 @@
+// ==========================================
+// OLD NODE.JS/EXPRESS BACKEND - DEPRECATED
+// This backend has been replaced by FastAPI (Python) in /backend-python/
+// Kept for reference only - DO NOT RUN
+// ==========================================
+
+/*
 // backend/app.js
 import express from "express";
 import cors from "cors";
@@ -56,3 +63,4 @@ app.use((req, res) => {
 });
 
 export default app;
+*/

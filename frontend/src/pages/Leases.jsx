@@ -39,11 +39,15 @@ export default function Leases() {
       return alert("Fill all fields!");
 
     try {
+      // Convert date strings to ISO datetime format
+      const startDateTime = startDate ? new Date(startDate).toISOString() : null;
+      const endDateTime = endDate ? new Date(endDate).toISOString() : null;
+
       await createLease({
         unitId: Number(selectedUnit),
         tenantId: Number(selectedTenant),
-        startDate,
-        endDate,
+        startDate: startDateTime,
+        endDate: endDateTime,
         rent: Number(rentAmount),
       });
 
@@ -278,7 +282,7 @@ export default function Leases() {
                     <option value="">-- Select --</option>
                     {tenants.map((t) => (
                       <option key={t.id} value={t.id}>
-                        {t.name}
+                        {t.user?.name || t.name} ({t.user?.email || 'No email'})
                       </option>
                     ))}
                   </select>
@@ -463,7 +467,7 @@ export default function Leases() {
                         color: '#e2e8f0',
                         margin: 0
                       }}>
-                        {lease.tenant?.name || 'Unknown'}
+                        {lease.tenant?.user?.name || 'Unknown'}
                       </h3>
                     </div>
                     <div style={{
@@ -675,7 +679,7 @@ export default function Leases() {
                             padding: '1rem',
                             color: '#e2e8f0'
                           }}>
-                            {lease.tenant?.name || 'Unknown'}
+                            {lease.tenant?.user?.name || 'Unknown'}
                           </td>
                           <td style={{
                             padding: '1rem',
@@ -836,7 +840,7 @@ export default function Leases() {
                 }}>
                   <Users size={24} style={{ color: '#10b981' }} />
                   <span style={{ fontSize: '1.1rem', fontWeight: '600', color: '#e2e8f0' }}>
-                    {selectedLease.tenant?.name || 'Unknown'}
+                    {selectedLease.tenant?.user?.name || 'Unknown'}
                   </span>
                 </div>
               </div>

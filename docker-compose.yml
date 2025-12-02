@@ -13,16 +13,16 @@ services:
 
   backend:
     build:
-      context: ./backend
-    container_name: pm-backend
+      context: ./backend-python
+    container_name: pm-backend-python
     ports:
       - "5000:5000"          # host:container
     env_file:
-      - ./backend/.env       # uses your existing backend .env
+      - ./backend-python/.env       # uses Python backend .env
     depends_on:
       - db
-    # If you want logs during dev, you can add:
-    # command: ["npm", "run", "dev"]
+    volumes:
+      - ./backend-python/uploads:/app/uploads
 
   frontend:
     build:

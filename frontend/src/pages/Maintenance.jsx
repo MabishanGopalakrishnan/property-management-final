@@ -742,36 +742,40 @@ export default function Maintenance() {
                   gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
                   gap: '0.75rem'
                 }}>
-                  {detailData.photos.map((url, i) => (
-                    <div key={i} style={{
-                      position: 'relative',
-                      borderRadius: '12px',
-                      overflow: 'hidden',
-                      border: '1px solid rgba(255,255,255,0.1)',
-                      transition: 'all 0.3s ease',
-                      cursor: 'pointer'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'scale(1.05)';
-                      e.currentTarget.style.boxShadow = '0 8px 20px rgba(6,182,212,0.3)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'scale(1)';
-                      e.currentTarget.style.boxShadow = 'none';
-                    }}
-                    onClick={() => window.open(url, '_blank')}>
-                      <img 
-                        src={url} 
-                        alt={`Maintenance ${i + 1}`} 
-                        style={{
-                          width: '100%',
-                          height: '140px',
-                          objectFit: 'cover',
-                          display: 'block'
-                        }}
-                      />
-                    </div>
-                  ))}
+                  {detailData.photos.map((url, i) => {
+                    // Construct full URL with proper encoding
+                    const fullUrl = `http://localhost:5000${encodeURI(url)}`;
+                    return (
+                      <div key={i} style={{
+                        position: 'relative',
+                        borderRadius: '12px',
+                        overflow: 'hidden',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        transition: 'all 0.3s ease',
+                        cursor: 'pointer'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'scale(1.05)';
+                        e.currentTarget.style.boxShadow = '0 8px 20px rgba(6,182,212,0.3)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'scale(1)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }}
+                      onClick={() => window.open(fullUrl, '_blank')}>
+                        <img 
+                          src={fullUrl} 
+                          alt={`Maintenance ${i + 1}`} 
+                          style={{
+                            width: '100%',
+                            height: '140px',
+                            objectFit: 'cover',
+                            display: 'block'
+                          }}
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
               ) : (
                 <p style={{

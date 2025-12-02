@@ -32,11 +32,14 @@ export function AuthProvider({ children }) {
 const login = async (form) => {
   const res = await loginRequest(form);
 
-  if (!res?.token || !res?.user) {
+  // Python backend returns 'access_token', JS backend returns 'token'
+  const token = res?.access_token || res?.token;
+  
+  if (!token || !res?.user) {
     throw new Error("Invalid response from server");
   }
 
-  localStorage.setItem("token", res.token);
+  localStorage.setItem("token", token);
   setUser(res.user);
 
   return res.user;

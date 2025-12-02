@@ -194,7 +194,6 @@ export default function Dashboard() {
                     position: 'relative',
                     overflow: 'hidden'
                   }}>
-                    <div style={{ position: 'absolute', top: '-20px', right: '-20px', fontSize: '8rem', opacity: '0.05' }}>🏢</div>
                     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
                       <div>
                         <div style={{ color: '#94a3b8', fontSize: '0.875rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
@@ -241,7 +240,6 @@ export default function Dashboard() {
                     position: 'relative',
                     overflow: 'hidden'
                   }}>
-                    <div style={{ position: 'absolute', top: '-20px', right: '-20px', fontSize: '8rem', opacity: '0.05' }}>🏠</div>
                     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
                       <div>
                         <div style={{ color: '#94a3b8', fontSize: '0.875rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
@@ -302,7 +300,6 @@ export default function Dashboard() {
                     position: 'relative',
                     overflow: 'hidden'
                   }}>
-                    <div style={{ position: 'absolute', top: '-20px', right: '-20px', fontSize: '8rem', opacity: '0.05' }}>💰</div>
                     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
                       <div>
                         <div style={{ color: '#94a3b8', fontSize: '0.875rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
@@ -349,7 +346,6 @@ export default function Dashboard() {
                     position: 'relative',
                     overflow: 'hidden'
                   }}>
-                    <div style={{ position: 'absolute', top: '-20px', right: '-20px', fontSize: '8rem', opacity: '0.05' }}>📋</div>
                     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
                       <div>
                         <div style={{ color: '#94a3b8', fontSize: '0.875rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>

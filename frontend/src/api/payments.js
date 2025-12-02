@@ -1,15 +1,15 @@
 // frontend/src/api/payments.js
 import API from "./axiosConfig";
 
-// Payments for the logged-in tenant
+// Payments for the logged-in tenant or landlord (backend checks role)
 export const getMyPayments = async () => {
-  const res = await API.get("/payments/mine");
+  const res = await API.get("/payments/");
   return res.data;
 };
 
-// Payments for the logged-in property manager (all leases)
+// Payments for the logged-in property manager (same endpoint, role checked by backend)
 export const getLandlordPayments = async () => {
-  const res = await API.get("/payments/landlord");
+  const res = await API.get("/payments/");
   return res.data;
 };
 
@@ -28,6 +28,12 @@ export const payPayment = async (paymentId) => {
 // Create Stripe checkout session for a payment
 export const createPaymentCheckout = async (paymentId) => {
   const res = await API.post(`/payments/${paymentId}/checkout`);
+  return res.data;
+};
+
+// Verify payment after Stripe checkout
+export const verifyPayment = async (paymentId, sessionId) => {
+  const res = await API.post(`/payments/${paymentId}/verify?session_id=${sessionId}`);
   return res.data;
 };
 

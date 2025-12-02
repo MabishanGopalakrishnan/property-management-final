@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { getMyProperties, createProperty, updateProperty, deleteProperty } from "../api/properties";
 import { getUnitsByProperty, createUnit, updateUnit, deleteUnit } from "../api/units";
+import { getRecentActivity } from "../api/alerts";
 import { useAuth } from "../context/AuthContext";
 import AddressAutocomplete from "../components/AddressAutocomplete";
 import { ChevronDown, ChevronUp, Home, MapPin, Edit2, Trash2, Plus, Building2, DollarSign } from 'lucide-react';
@@ -18,18 +19,15 @@ export default function Properties() {
   const [propertyUnits, setPropertyUnits] = useState({});
   const [loadingUnits, setLoadingUnits] = useState({});
   const [showAddProperty, setShowAddProperty] = useState(false);
-  const [recentActivity] = useState([
-    { action: 'Property Added', property: '555 apartment', time: '2 hours ago' },
-    { action: 'Unit Created', property: 'Ontario Tech University', time: '5 hours ago' },
-    { action: 'Property Updated', property: 'Downtown towers', time: '1 day ago' },
-  ]);
+  const [recentActivity, setRecentActivity] = useState([]);
+  const [loadingActivity, setLoadingActivity] = useState(true);
 
   const [form, setForm] = useState({
     title: "",
     address: "",
     city: "",
-    province: "",
-    postalCode: "",
+    state: "",
+    zipCode: "",
     description: "",
   });
 
@@ -70,7 +68,21 @@ export default function Properties() {
 
   useEffect(() => {
     loadProps();
+    loadActivity();
   }, []);
+
+  const loadActivity = async () => {
+    setLoadingActivity(true);
+    try {
+      const data = await getRecentActivity();
+      setRecentActivity(data || []);
+    } catch (err) {
+      console.error("Failed to load recent activity:", err);
+      setRecentActivity([]);
+    } finally {
+      setLoadingActivity(false);
+    }
+  };
 
   const handleChange = (e) => {
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
@@ -81,8 +93,8 @@ export default function Properties() {
       ...f,
       address: addressData.address,
       city: addressData.city,
-      province: addressData.province,
-      postalCode: addressData.postalCode,
+      state: addressData.state,
+      zipCode: addressData.zipCode,
     }));
   };
 
@@ -90,8 +102,8 @@ export default function Properties() {
     e.preventDefault();
     
     // Validation: Check all required fields
-    if (!form.title || !form.address || !form.city || !form.province || !form.postalCode) {
-      setError("Please fill in all required fields: Title, Address, City, Province, and Postal Code.");
+    if (!form.title || !form.address || !form.city || !form.state || !form.zipCode) {
+      setError("Please fill in all required fields: Title, Address, City, State, and Zip Code.");
       return;
     }
     
@@ -113,11 +125,12 @@ export default function Properties() {
         title: "",
         address: "",
         city: "",
-        province: "",
-        postalCode: "",
+        state: "",
+        zipCode: "",
         description: "",
       });
       await loadProps();
+      await loadActivity(); // Reload activity feed after creating/updating
     } catch (err) {
       console.error("Property operation error:", err);
       setError(editingId ? "Failed to update property." : "Failed to create property.");
@@ -131,8 +144,8 @@ export default function Properties() {
       title: property.title,
       address: property.address,
       city: property.city,
-      province: property.province,
-      postalCode: property.postalCode,
+      state: property.state,
+      zipCode: property.zipCode,
       description: property.description || "",
     });
     setEditingId(property.id);
@@ -146,8 +159,8 @@ export default function Properties() {
       title: "",
       address: "",
       city: "",
-      province: "",
-      postalCode: "",
+      state: "",
+      zipCode: "",
       description: "",
     });
     setError("");
@@ -302,7 +315,7 @@ export default function Properties() {
                             color: '#67e8f9'
                           }}>
                             <div><strong>Selected:</strong> {form.address}</div>
-                            <div style={{ color: '#94a3b8' }}>{form.city}, {form.province} {form.postalCode}</div>
+                            <div style={{ color: '#94a3b8' }}>{form.city}, {form.state} {form.zipCode}</div>
                           </div>
                         )}
                       </div>
@@ -342,9 +355,9 @@ export default function Properties() {
                           />
                           <input
                             className="input"
-                            name="province"
-                            placeholder="Province"
-                            value={form.province}
+                            name="state"
+                            placeholder="State"
+                            value={form.state}
                             onChange={handleChange}
                             required
                             style={{
@@ -358,9 +371,9 @@ export default function Properties() {
                         </div>
                         <input
                           className="input"
-                          name="postalCode"
-                          placeholder="Postal Code"
-                          value={form.postalCode}
+                          name="zipCode"
+                          placeholder="Zip Code"
+                          value={form.zipCode}
                           onChange={handleChange}
                           required
                           style={{
@@ -697,3 +710,4 @@ export default function Properties() {
     </div>
   );
 }
+

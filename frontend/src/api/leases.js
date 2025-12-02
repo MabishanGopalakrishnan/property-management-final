@@ -3,7 +3,7 @@ import API from "./axiosConfig";
 
 // Create a lease
 export const createLease = async (data) => {
-  const res = await API.post("/leases", data);
+  const res = await API.post("/leases/", data);
   return res.data;
 };
 

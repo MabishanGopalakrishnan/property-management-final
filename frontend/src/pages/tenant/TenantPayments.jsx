@@ -1,20 +1,55 @@
 // src/pages/tenant/TenantPayments.jsx
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { getTenantPayments } from "../../api/tenantPortal";
-import { createPaymentCheckout } from "../../api/payments";
+import { createPaymentCheckout, verifyPayment } from "../../api/payments";
 
 export default function TenantPayments() {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [payingId, setPayingId] = useState(null);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
-    getTenantPayments()
-      .then((data) => setPayments(Array.isArray(data) ? data : []))
-      .catch((err) => setError("Failed to load payments"))
-      .finally(() => setLoading(false));
-  }, []);
+    // Check for success/cancel query params
+    const success = searchParams.get("success");
+    const canceled = searchParams.get("canceled");
+    const paymentId = searchParams.get("payment_id");
+    const sessionId = searchParams.get("session_id");
+    
+    if (success === "true" && paymentId && sessionId) {
+      // Verify payment with backend
+      verifyPayment(paymentId, sessionId)
+        .then(() => {
+          setSuccessMessage("Payment completed successfully! 🎉");
+          // Remove query params
+          setSearchParams({});
+          // Refresh payments list
+          return getTenantPayments();
+        })
+        .then((data) => setPayments(Array.isArray(data) ? data : []))
+        .catch((err) => {
+          setError("Payment verification failed. Please contact support.");
+          setSearchParams({});
+        });
+    } else if (success === "true") {
+      setSuccessMessage("Payment completed successfully! 🎉");
+      setSearchParams({});
+    } else if (canceled === "true") {
+      setError("Payment was canceled. You can try again.");
+      setSearchParams({});
+    }
+
+    // Load payments initially
+    if (!paymentId || !sessionId) {
+      getTenantPayments()
+        .then((data) => setPayments(Array.isArray(data) ? data : []))
+        .catch((err) => setError("Failed to load payments"))
+        .finally(() => setLoading(false));
+    }
+  }, [searchParams, setSearchParams]);
 
   const handlePayWithStripe = async (paymentId) => {
     setPayingId(paymentId);
@@ -46,8 +81,14 @@ export default function TenantPayments() {
     <div className="tenant-page">
       <h1 className="tenant-page-title">Payments</h1>
 
+      {successMessage && (
+        <div className="tenant-card" style={{ padding: "1rem", color: "#2e7d32", backgroundColor: "#e8f5e9", borderLeft: "4px solid #2e7d32", marginBottom: "1rem" }}>
+          {successMessage}
+        </div>
+      )}
+
       {error && (
-        <div className="tenant-card" style={{ padding: "1rem", color: "#d32f2f", backgroundColor: "#ffebee", borderLeft: "4px solid #d32f2f" }}>
+        <div className="tenant-card" style={{ padding: "1rem", color: "#d32f2f", backgroundColor: "#ffebee", borderLeft: "4px solid #d32f2f", marginBottom: "1rem" }}>
           {error}
         </div>
       )}
@@ -81,8 +122,8 @@ export default function TenantPayments() {
                       {p.status}
                     </span>
                   </td>
-                  <td>{p.propertyTitle}</td>
-                  <td>{p.unitNumber}</td>
+                  <td>{p.lease?.unit?.property?.title || 'N/A'}</td>
+                  <td>{p.lease?.unit?.unitNumber || 'N/A'}</td>
                   <td>
                     {p.status === "PENDING" ? (
                       <button
