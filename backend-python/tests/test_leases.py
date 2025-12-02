@@ -25,17 +25,16 @@ class TestLeaseCreation:
                 "unitId": sample_unit.id,
                 "startDate": start_date.isoformat(),
                 "endDate": end_date.isoformat(),
-                "monthlyRent": 1200.00,
-                "securityDeposit": 1200.00,
+                "rent": 1200,
                 "status": "ACTIVE"
             }
         )
-        assert response.status_code == 200
+        assert response.status_code == 201
         data = response.json()
         assert data["tenantId"] == tenant.id
         assert data["unitId"] == sample_unit.id
         assert data["status"] == "ACTIVE"
-        assert float(data["monthlyRent"]) == 1200.00
+        assert float(data["rent"]) == 1200.00
     
     def test_create_duplicate_active_lease_fails(self, client, auth_headers_landlord, sample_lease, db_session):
         """Test creating duplicate active lease on same unit fails"""
@@ -47,15 +46,14 @@ class TestLeaseCreation:
         end_date = start_date + timedelta(days=365)
         
         response = client.post(
-            "/api/leases",
+            "/api/leases/",
             headers=auth_headers_landlord,
             json={
                 "tenantId": tenant.id,
                 "unitId": sample_lease.unitId,  # Same unit as existing active lease
                 "startDate": start_date.isoformat(),
                 "endDate": end_date.isoformat(),
-                "monthlyRent": 1300.00,
-                "securityDeposit": 1300.00,
+                "rent": 1300,
                 "status": "ACTIVE"
             }
         )
@@ -71,15 +69,14 @@ class TestLeaseCreation:
         end_date = start_date - timedelta(days=30)  # End before start
         
         response = client.post(
-            "/api/leases",
+            "/api/leases/",
             headers=auth_headers_landlord,
             json={
                 "tenantId": tenant.id,
                 "unitId": sample_unit.id,
                 "startDate": start_date.isoformat(),
                 "endDate": end_date.isoformat(),
-                "monthlyRent": 1200.00,
-                "securityDeposit": 1200.00,
+                "rent": 1200,
                 "status": "ACTIVE"
             }
         )
@@ -92,7 +89,7 @@ class TestLeaseRetrieval:
     def test_get_all_leases(self, client, auth_headers_landlord, sample_lease):
         """Test retrieving all leases"""
         response = client.get(
-            "/api/leases",
+            "/api/leases/",
             headers=auth_headers_landlord
         )
         assert response.status_code == 200
@@ -144,9 +141,9 @@ class TestLeaseUpdate:
             f"/api/leases/{sample_lease.id}",
             headers=auth_headers_landlord,
             json={
-                "monthlyRent": 1500.00
+                "rent": 1500
             }
         )
         assert response.status_code == 200
         data = response.json()
-        assert float(data["monthlyRent"]) == 1500.00
+        assert data["rent"] == 1500

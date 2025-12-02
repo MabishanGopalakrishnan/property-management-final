@@ -13,7 +13,7 @@ export default function Sidebar() {
         <Link className="sidebar-link" to="/leases">Leases</Link>
         <Link className="sidebar-link" to="/payments">Payments</Link>
         <Link className="sidebar-link" to="/maintenance">Maintenance</Link>
-        <Link className="sidebar-link" to="/analytics">Analytics</Link>
+
       </nav>
     </div>
   );

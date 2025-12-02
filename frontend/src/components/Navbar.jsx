@@ -53,9 +53,7 @@ export default function Navbar() {
               Payments
             </NavLink>
 
-            <NavLink to="/analytics" style={navLinkStyle}>
-              Analytics
-            </NavLink>
+
 
             <NavLink to="/maintenance" style={navLinkStyle}>
               Maintenance

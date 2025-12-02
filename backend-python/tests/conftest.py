@@ -60,9 +60,8 @@ def landlord_user(db_session):
     user = User(
         email="landlord@test.com",
         name="Test Landlord",
-        passwordHash=pwd_context.hash("password123"),
-        role="LANDLORD",
-        phone="1234567890"
+        password=pwd_context.hash("password123"),
+        role="LANDLORD"
     )
     db_session.add(user)
     db_session.commit()
@@ -79,9 +78,8 @@ def tenant_user(db_session):
     user = User(
         email="tenant@test.com",
         name="Test Tenant",
-        passwordHash=pwd_context.hash("password123"),
-        role="TENANT",
-        phone="0987654321"
+        password=pwd_context.hash("password123"),
+        role="TENANT"
     )
     db_session.add(user)
     db_session.commit()
@@ -122,7 +120,7 @@ def auth_headers_tenant(client, tenant_user):
 def sample_property(db_session, landlord_user):
     """Create a sample property"""
     property_obj = Property(
-        name="Test Property",
+        title="Test Property",
         address="123 Test St",
         city="Test City",
         state="TS",
@@ -143,9 +141,8 @@ def sample_unit(db_session, sample_property):
         propertyId=sample_property.id,
         unitNumber="101",
         bedrooms=2,
-        bathrooms=1.0,
-        rent=1200.00,
-        isOccupied=False
+        bathrooms=1,
+        rentAmount=1200.00
     )
     db_session.add(unit)
     db_session.commit()
@@ -166,8 +163,7 @@ def sample_lease(db_session, sample_unit, tenant_user):
         unitId=sample_unit.id,
         startDate=datetime.now(),
         endDate=datetime.now() + timedelta(days=365),
-        monthlyRent=1200.00,
-        securityDeposit=1200.00,
+        rent=1200,
         status="ACTIVE"
     )
     db_session.add(lease)

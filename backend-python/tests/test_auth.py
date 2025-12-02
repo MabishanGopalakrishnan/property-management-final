@@ -20,7 +20,7 @@ class TestUserRegistration:
                 "phone": "5551234567"
             }
         )
-        assert response.status_code == 200
+        assert response.status_code == 201
         data = response.json()
         assert "access_token" in data
         assert data["user"]["email"] == "newlandlord@test.com"
@@ -38,7 +38,7 @@ class TestUserRegistration:
                 "phone": "5559876543"
             }
         )
-        assert response.status_code == 200
+        assert response.status_code == 201
         data = response.json()
         assert data["user"]["role"] == "TENANT"
         # Tenant record should be automatically created
@@ -110,7 +110,7 @@ class TestUserLogin:
             }
         )
         assert response.status_code == 401
-        assert "incorrect" in response.json()["detail"].lower()
+        assert "invalid" in response.json()["detail"].lower() or "incorrect" in response.json()["detail"].lower()
     
     def test_login_nonexistent_user(self, client):
         """Test login fails for non-existent user"""

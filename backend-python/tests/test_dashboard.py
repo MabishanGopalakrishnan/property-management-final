@@ -59,9 +59,8 @@ class TestDashboardStatistics:
             propertyId=sample_property.id,
             unitNumber="102",
             bedrooms=1,
-            bathrooms=1.0,
-            rent=1000.00,
-            isOccupied=False
+            bathrooms=1,
+            rentAmount=1000.00
         )
         db_session.add(unit2)
         db_session.commit()

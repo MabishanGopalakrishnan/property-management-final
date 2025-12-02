@@ -718,53 +718,6 @@ a {
   border: 1px solid #475569;
   color: #e2e8f0;
 }
-/* =============================
-   PAYMENT ANALYTICS DASHBOARD
-============================= */
-
-.analytics-kpis .kpi-card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.kpi-label {
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #9ca3af;
-}
-
-.kpi-value {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: #f9fafb;
-}
-
-/* Section headers */
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.section-header h2 {
-  margin: 0;
-  font-size: 1.1rem;
-}
-
-.section-subtitle {
-  font-size: 0.85rem;
-  color: #9ca3af;
-}
-
-.section-actions {
-  display: flex;
-  gap: 0.6rem;
-  align-items: center;
-}
 
 /* ---------- Tenant layout ---------- */
 
@@ -1237,49 +1190,4 @@ a {
 .pac-container .hdpi.pac-logo:after,
 .pac-container .pac-logo:after {
   display: none !important;
-}
-
-/* Responsive Login Page Layout */
-@media (max-width: 968px) {
-  /* Stack login layout vertically on tablet/mobile */
-  .login-grid {
-    grid-template-columns: 1fr !important;
-  }
-  
-  .login-hero {
-    padding: 2rem 1.5rem !important;
-    border-right: none !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-  }
-  
-  .login-form-section {
-    padding: 2rem 1.5rem !important;
-  }
-  
-  .feature-grid-2col {
-    grid-template-columns: 1fr !important;
-  }
-}
-
-@media (max-width: 640px) {
-  .login-hero h1 {
-    font-size: 1.875rem !important;
-  }
-  
-  .login-hero p {
-    font-size: 1rem !important;
-  }
-}
-
-/* Shimmer animation for gradient text */
-@keyframes shimmer {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
 }

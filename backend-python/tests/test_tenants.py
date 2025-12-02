@@ -11,7 +11,7 @@ class TestTenantCreation:
     def test_get_all_tenants(self, client, auth_headers_landlord, tenant_user):
         """Test landlord can retrieve all tenants"""
         response = client.get(
-            "/api/tenants",
+            "/api/tenants/",
             headers=auth_headers_landlord
         )
         assert response.status_code == 200
@@ -22,7 +22,7 @@ class TestTenantCreation:
     def test_get_tenant_with_user_info(self, client, auth_headers_landlord, tenant_user):
         """Test tenant includes user information (name, email)"""
         response = client.get(
-            "/api/tenants",
+            "/api/tenants/",
             headers=auth_headers_landlord
         )
         assert response.status_code == 200
@@ -47,7 +47,7 @@ class TestTenantDeletion:
         user = User(
             email="deleteme@test.com",
             name="Delete Me",
-            passwordHash=pwd_context.hash("password123"),
+            password=pwd_context.hash("password123"),
             role="TENANT"
         )
         db_session.add(user)
@@ -104,9 +104,9 @@ class TestTenantAuthorization:
         assert response.status_code in [403, 401]
     
     def test_tenant_cannot_list_all_tenants(self, client, auth_headers_tenant):
-        """Test tenant cannot list all tenants (landlord-only)"""
+        """Test tenant cannot list all tenants (authorization check)"""
         response = client.get(
-            "/api/tenants",
+            "/api/tenants/",
             headers=auth_headers_tenant
         )
         assert response.status_code in [403, 401]

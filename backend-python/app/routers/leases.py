@@ -83,6 +83,13 @@ async def create_lease(
             detail=f"Unit already has an active lease (Lease ID: {existing_active_lease.id}). Please end the current lease before creating a new one."
         )
     
+    # Validate dates
+    if lease_data.endDate and lease_data.endDate < lease_data.startDate:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="End date must be after start date"
+        )
+    
     # Verify tenant exists
     tenant = db.query(Tenant).filter(Tenant.id == lease_data.tenantId).first()
     if not tenant:

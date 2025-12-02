@@ -17,7 +17,7 @@ router = APIRouter()
 @router.get("/", response_model=List[TenantResponse])
 async def get_tenants(
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_landlord)
 ):
     """Get all tenants with their user information"""
     tenants = db.query(Tenant).options(

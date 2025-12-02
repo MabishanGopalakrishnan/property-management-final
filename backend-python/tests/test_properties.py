@@ -14,7 +14,7 @@ class TestPropertyCreation:
             "/api/properties",
             headers=auth_headers_landlord,
             json={
-                "name": "Sunset Apartments",
+                "title": "Sunset Apartments",
                 "address": "456 Ocean Ave",
                 "city": "Miami",
                 "state": "FL",
@@ -22,9 +22,9 @@ class TestPropertyCreation:
                 "description": "Beautiful beachfront property"
             }
         )
-        assert response.status_code == 200
+        assert response.status_code == 201
         data = response.json()
-        assert data["name"] == "Sunset Apartments"
+        assert data["title"] == "Sunset Apartments"
         assert data["city"] == "Miami"
         assert "id" in data
     
@@ -33,7 +33,7 @@ class TestPropertyCreation:
         response = client.post(
             "/api/properties",
             json={
-                "name": "Unauthorized Property",
+                "title": "Unauthorized Property",
                 "address": "123 Test St",
                 "city": "Test City",
                 "state": "TS",
@@ -68,7 +68,7 @@ class TestPropertyRetrieval:
         data = response.json()
         assert isinstance(data, list)
         assert len(data) >= 1
-        assert data[0]["name"] == "Test Property"
+        assert data[0]["title"] == "Test Property"
     
     def test_get_property_by_id(self, client, auth_headers_landlord, sample_property):
         """Test retrieving a specific property by ID"""
@@ -79,7 +79,7 @@ class TestPropertyRetrieval:
         assert response.status_code == 200
         data = response.json()
         assert data["id"] == sample_property.id
-        assert data["name"] == "Test Property"
+        assert data["title"] == "Test Property"
     
     def test_get_nonexistent_property(self, client, auth_headers_landlord):
         """Test retrieving non-existent property returns 404"""
@@ -99,7 +99,7 @@ class TestPropertyUpdate:
             f"/api/properties/{sample_property.id}",
             headers=auth_headers_landlord,
             json={
-                "name": "Updated Property Name",
+                "title": "Updated Property Name",
                 "address": "123 Test St",
                 "city": "Test City",
                 "state": "TS",
@@ -109,7 +109,7 @@ class TestPropertyUpdate:
         )
         assert response.status_code == 200
         data = response.json()
-        assert data["name"] == "Updated Property Name"
+        assert data["title"] == "Updated Property Name"
         assert data["description"] == "Updated description"
     
     def test_update_property_unauthorized(self, client, auth_headers_tenant, sample_property):
@@ -118,7 +118,7 @@ class TestPropertyUpdate:
             f"/api/properties/{sample_property.id}",
             headers=auth_headers_tenant,
             json={
-                "name": "Hacked Property",
+                "title": "Hacked Property",
                 "address": "123 Test St",
                 "city": "Test City",
                 "state": "TS",

@@ -41,8 +41,8 @@ app = FastAPI(
     title="Property Management API",
     description="Backend API for Tenant and Property Management System",
     version="1.0.0",
-    lifespan=lifespan,
-    redirect_slashes=False  # Disable automatic redirect for trailing slashes
+    lifespan=lifespan
+    # redirect_slashes defaults to True, allowing /api/leases and /api/leases/ to work
 )
 
 # CORS Configuration

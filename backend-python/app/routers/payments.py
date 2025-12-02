@@ -62,6 +62,13 @@ async def create_payment(
     current_user: User = Depends(get_current_landlord)
 ):
     """Create a new payment"""
+    # Validate payment amount
+    if payment_data.amount <= 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Payment amount must be greater than zero"
+        )
+    
     # Verify lease exists
     lease = db.query(Lease).filter(Lease.id == payment_data.leaseId).first()
     if not lease:

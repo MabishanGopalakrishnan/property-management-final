@@ -2,7 +2,7 @@
 SQLAlchemy Models for Property Management System
 Converted from Prisma schema
 """
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Enum as SQLEnum, ARRAY
+from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Enum as SQLEnum, JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from datetime import datetime
@@ -162,7 +162,7 @@ class MaintenanceRequest(Base):
     status = Column(SQLEnum(MaintenanceStatusEnum), default=MaintenanceStatusEnum.PENDING, nullable=False)
     priority = Column(SQLEnum(MaintenancePriorityEnum), default=MaintenancePriorityEnum.MEDIUM, nullable=False)
     contractor = Column(String, nullable=True)
-    photos = Column(ARRAY(String), default=[], nullable=False)
+    photos = Column(JSON, default=list, nullable=False)
     
     leaseId = Column(Integer, ForeignKey("Lease.id", ondelete="CASCADE"), nullable=False)
     

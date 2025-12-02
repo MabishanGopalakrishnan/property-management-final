@@ -107,8 +107,8 @@ export default function AddressAutocomplete({ onAddressSelect, defaultValue = ""
       let streetNumber = "";
       let route = "";
       let city = "";
-      let state = "";
-      let zipCode = "";
+      let province = "";
+      let postalCode = "";
       let country = "";
 
       addressComponents.forEach((component) => {
@@ -124,10 +124,10 @@ export default function AddressAutocomplete({ onAddressSelect, defaultValue = ""
           city = component.long_name;
         }
         if (types.includes("administrative_area_level_1")) {
-          state = component.short_name;
+          province = component.short_name;
         }
         if (types.includes("postal_code")) {
-          zipCode = component.long_name;
+          postalCode = component.long_name;
         }
         if (types.includes("country")) {
           country = component.long_name;
@@ -139,8 +139,8 @@ export default function AddressAutocomplete({ onAddressSelect, defaultValue = ""
       console.log("Parsed address data:", {
         address,
         city,
-        state,
-        zipCode,
+        province,
+        postalCode,
         country
       });
 
@@ -152,8 +152,8 @@ export default function AddressAutocomplete({ onAddressSelect, defaultValue = ""
         fullAddress: place.formatted_address,
         address,
         city,
-        state,
-        zipCode,
+        province,
+        postalCode,
         country,
         lat: place.geometry.location.lat(),
         lng: place.geometry.location.lng(),

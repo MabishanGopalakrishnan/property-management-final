@@ -18,14 +18,13 @@ class TestPaymentCreation:
             leaseId=sample_lease.id,
             amount=1200.00,
             dueDate=datetime.now(),
-            status="PENDING",
-            description="Monthly Rent - December"
+            status="PENDING"
         )
         db_session.add(payment)
         db_session.commit()
         
         response = client.get(
-            "/api/payments",
+            "/api/payments/",
             headers=auth_headers_landlord
         )
         assert response.status_code == 200
@@ -41,8 +40,7 @@ class TestPaymentCreation:
             leaseId=sample_lease.id,
             amount=1200.00,
             dueDate=datetime.now(),
-            status="PENDING",
-            description="Monthly Rent"
+            status="PENDING"
         )
         db_session.add(payment)
         db_session.commit()
@@ -67,8 +65,7 @@ class TestPaymentStatus:
             leaseId=sample_lease.id,
             amount=1200.00,
             dueDate=datetime.now(),
-            status="PENDING",
-            description="Test Payment"
+            status="PENDING"
         )
         db_session.add(payment)
         db_session.commit()
@@ -96,8 +93,7 @@ class TestStripeIntegration:
             leaseId=sample_lease.id,
             amount=1200.00,
             dueDate=datetime.now(),
-            status="PENDING",
-            description="Monthly Rent"
+            status="PENDING"
         )
         db_session.add(payment)
         db_session.commit()
@@ -129,7 +125,7 @@ class TestPaymentValidation:
     def test_negative_payment_amount_rejected(self, client, auth_headers_landlord, sample_lease):
         """Test negative payment amounts are rejected"""
         response = client.post(
-            "/api/payments",
+            "/api/payments/",
             headers=auth_headers_landlord,
             json={
                 "leaseId": sample_lease.id,
@@ -143,7 +139,7 @@ class TestPaymentValidation:
     def test_zero_payment_amount_rejected(self, client, auth_headers_landlord, sample_lease):
         """Test zero payment amounts are rejected"""
         response = client.post(
-            "/api/payments",
+            "/api/payments/",
             headers=auth_headers_landlord,
             json={
                 "leaseId": sample_lease.id,
