@@ -95,7 +95,7 @@ async def create_unit(
         "propertyId": new_unit.propertyId,
         "createdAt": new_unit.createdAt,
         "updatedAt": new_unit.updatedAt,
-        "status": "AVAILABLE"  # New units start as available
+        "status": "AVAILABLE"
     }
 
 

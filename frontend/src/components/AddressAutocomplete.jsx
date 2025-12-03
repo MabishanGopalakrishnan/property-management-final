@@ -52,7 +52,6 @@ export default function AddressAutocomplete({ onAddressSelect, defaultValue = ""
         return;
       }
 
-      // Add callback function to window
       window.initGoogleMaps = () => {
         setScriptLoaded(true);
         delete window.initGoogleMaps;
@@ -73,7 +72,6 @@ export default function AddressAutocomplete({ onAddressSelect, defaultValue = ""
   useEffect(() => {
     if (!scriptLoaded || !inputRef.current) return;
 
-    // Initialize Google Places Autocomplete
     try {
       autocompleteRef.current = new window.google.maps.places.Autocomplete(
         inputRef.current,
@@ -94,8 +92,6 @@ export default function AddressAutocomplete({ onAddressSelect, defaultValue = ""
       // Listen for place selection
       autocompleteRef.current.addListener("place_changed", () => {
         const place = autocompleteRef.current.getPlace();
-        
-        console.log("Place selected:", place);
         
         if (!place.geometry) {
           console.warn("No details available for input:", place.name);

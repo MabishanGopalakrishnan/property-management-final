@@ -104,8 +104,8 @@ class PropertyBase(BaseModel):
     title: str
     address: str
     city: str
-    state: str
-    zipCode: str
+    province: str
+    postalCode: str
     description: Optional[str] = None
 
 
@@ -117,7 +117,7 @@ class PropertyUpdate(BaseModel):
     title: Optional[str] = None
     address: Optional[str] = None
     city: Optional[str] = None
-    state: Optional[str] = None
+    province: Optional[str] = None
     zipCode: Optional[str] = None
     description: Optional[str] = None
 

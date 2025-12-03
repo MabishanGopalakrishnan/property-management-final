@@ -20,9 +20,6 @@ export const listUnits = async (req, res) => {
 
 export const createUnit = async (req, res) => {
   try {
-    console.log("REQ.USER:", req.user);
-    console.log("UNIT BODY:", req.body);
-    console.log("PROPERTY ID:", req.params.propertyId);
 
     const landlordId = req.user.id;
     const propertyId = req.params.propertyId;

@@ -28,7 +28,6 @@ export default function Dashboard() {
         const me = await getMe();
         if (setUser) setUser(me);
         
-        // Fetch alerts and stats for managers
         if (me.role === "LANDLORD") {
           try {
             const [alertsData, statsData] = await Promise.all([

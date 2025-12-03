@@ -1,7 +1,6 @@
 // frontend/src/api/maintenance.js
 import API from "./axiosConfig";
 
-// Fetch all maintenance requests (Property Manager)
 export const getMaintenanceRequests = async () => {
   const res = await API.get("/maintenance");
   return res.data;

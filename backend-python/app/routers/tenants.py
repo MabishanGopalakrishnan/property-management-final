@@ -79,7 +79,6 @@ async def delete_tenant(
             detail="Tenant not found"
         )
     
-    # Check if tenant has any active leases
     from ..models import Lease
     active_leases = db.query(Lease).filter(
         Lease.tenantId == tenant_id,

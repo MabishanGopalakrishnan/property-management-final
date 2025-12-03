@@ -16,7 +16,7 @@ export function AuthProvider({ children }) {
         return;
       }
       try {
-        const me = await getMe(); // ✅ goes through /api/auth/me
+        const me = await getMe();
         setUser(me);
       } catch {
         localStorage.removeItem("token");
@@ -28,11 +28,9 @@ export function AuthProvider({ children }) {
     restore();
   }, []);
 
-// LOGIN
 const login = async (form) => {
   const res = await loginRequest(form);
 
-  // Python backend returns 'access_token', JS backend returns 'token'
   const token = res?.access_token || res?.token;
   
   if (!token || !res?.user) {

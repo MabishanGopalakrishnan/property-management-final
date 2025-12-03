@@ -12,7 +12,6 @@ import {
 export const createLease = async (req, res) => {
   try {
     const landlordId = req.user.id;
-    console.log("CREATE LEASE BODY:", req.body);
     const lease = await createLeaseService(landlordId, req.body);
     res.json(lease);
   } catch (err) {

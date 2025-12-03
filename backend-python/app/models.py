@@ -79,8 +79,8 @@ class Property(Base):
     title = Column(String, nullable=False)
     address = Column(String, nullable=False)
     city = Column(String, nullable=False)
-    state = Column(String, nullable=False)
-    zipCode = Column(String, nullable=False)
+    province = Column(String, nullable=False)
+    postalCode = Column(String, nullable=False)
     description = Column(String, nullable=True)
     
     landlordId = Column(Integer, ForeignKey("User.id", ondelete="CASCADE"), nullable=False)

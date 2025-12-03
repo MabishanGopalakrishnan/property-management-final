@@ -16,16 +16,16 @@ class TestPropertyCreation:
             json={
                 "title": "Sunset Apartments",
                 "address": "456 Ocean Ave",
-                "city": "Miami",
-                "state": "FL",
-                "zipCode": "33139",
-                "description": "Beautiful beachfront property"
+                "city": "Toronto",
+                "province": "ON",
+                "postalCode": "M5V 3A8",
+                "description": "Beautiful downtown property"
             }
         )
         assert response.status_code == 201
         data = response.json()
         assert data["title"] == "Sunset Apartments"
-        assert data["city"] == "Miami"
+        assert data["city"] == "Toronto"
         assert "id" in data
     
     def test_create_property_without_auth(self, client):

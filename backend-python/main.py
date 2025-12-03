@@ -36,13 +36,11 @@ async def lifespan(app: FastAPI):
     print("👋 Shutting down Property Management API...")
 
 
-# Initialize FastAPI app
 app = FastAPI(
     title="Property Management API",
     description="Backend API for Tenant and Property Management System",
     version="1.0.0",
     lifespan=lifespan
-    # redirect_slashes defaults to True, allowing /api/leases and /api/leases/ to work
 )
 
 # CORS Configuration

@@ -65,12 +65,10 @@ export default function Properties() {
     setError("");
     try {
       if (editingId) {
-        // Update existing property
         await updateProperty(editingId, form);
         alert("Property updated successfully!");
         setEditingId(null);
       } else {
-        // Create new property
         await createProperty(form);
         alert("Property created successfully!");
       }

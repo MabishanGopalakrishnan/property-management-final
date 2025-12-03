@@ -117,8 +117,6 @@ async def verify_token(current_user: User = Depends(get_current_user)):
 async def google_login_or_register(google_data: GoogleAuthRequest, db: Session = Depends(get_db)):
     """Handle Google OAuth login or registration"""
     
-    print(f"🔵 Google auth request received: credential={google_data.credential[:30]}..., role={google_data.role}")
-    
     if not google_data.credential:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -132,7 +130,6 @@ async def google_login_or_register(google_data: GoogleAuthRequest, db: Session =
         )
     
     try:
-        print(f"🔵 Verifying Google token with client ID: {GOOGLE_CLIENT_ID[:30]}...")
         # Verify the Google token
         idinfo = id_token.verify_oauth2_token(
             google_data.credential,

@@ -162,6 +162,56 @@ Once the backend is running, access the interactive API documentation at:
 - **Swagger UI**: http://localhost:5000/docs
 - **ReDoc**: http://localhost:5000/redoc
 
+## 🏗️ Architecture
+
+For detailed architecture information, see:
+- [System Architecture](docs/architecture/SYSTEM_ARCHITECTURE.md) - Complete system design and data flow
+- [Database ER Diagram](docs/architecture/DATABASE_ER_DIAGRAM.md) - Database schema and relationships
+- [Class Diagram](docs/architecture/CLASS_DIAGRAM.md) - Backend and frontend class structure
+
+### High-Level Architecture
+```
+┌─────────────┐
+│   React     │ ──HTTP/REST──► ┌─────────────┐
+│  Frontend   │                │   FastAPI   │
+│  (Port 5173)│ ◄────JSON────  │   Backend   │
+└─────────────┘                │  (Port 5000)│
+                               └──────┬──────┘
+                                      │
+                                      │ SQLAlchemy
+                                      ▼
+                               ┌─────────────┐
+                               │ PostgreSQL  │
+                               │  Database   │
+                               │  (Port 5432)│
+                               └─────────────┘
+```
+
+**External Integrations:**
+- Google OAuth 2.0 (Authentication)
+- Stripe API (Payment Processing)
+- Google Maps API (Property Locations)
+
+## 📸 Screenshots
+
+### Dashboard
+![Dashboard](docs/screenshots/dashboard.png)
+*Landlord dashboard showing properties, occupancy rates, and revenue statistics*
+
+### Property Management
+![Properties](docs/screenshots/properties.png)
+*Property management interface with CRUD operations*
+
+### Lease Management
+![Leases](docs/screenshots/leases.png)
+*Lease tracking with status indicators and validation*
+
+### Payment Processing
+![Payments](docs/screenshots/payments.png)
+*Payment history with Stripe integration*
+
+> **Note:** Screenshots can be added to the `docs/screenshots/` folder to showcase the application interface.
+
 ## 🤝 Contributing
 
 1. Fork the repository

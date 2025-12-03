@@ -13,7 +13,6 @@ export default function TenantPayments() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
-    // Check for success/cancel query params
     const success = searchParams.get("success");
     const canceled = searchParams.get("canceled");
     const paymentId = searchParams.get("payment_id");

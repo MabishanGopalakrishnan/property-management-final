@@ -1,7 +1,6 @@
 // backend/src/services/tenantPortalService.js
 import prisma from "../prisma/client.js";
 
-// Helper: find tenant by userId or throw
 async function getTenantOrThrow(userId) {
   const tenant = await prisma.tenant.findUnique({
     where: { userId },

@@ -123,8 +123,8 @@ def sample_property(db_session, landlord_user):
         title="Test Property",
         address="123 Test St",
         city="Test City",
-        state="TS",
-        zipCode="12345",
+        province="ON",
+        postalCode="M5H 2N2",
         landlordId=landlord_user.id,
         description="Test property description"
     )

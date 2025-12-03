@@ -2,7 +2,6 @@
 import prisma from "../prisma/client.js";
 import { generateMonthlyPaymentsForLease } from "./paymentService.js";
 
-// Check if a unit already has an ACTIVE lease
 async function hasActiveLease(unitId) {
   const existing = await prisma.lease.findFirst({
     where: {

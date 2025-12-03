@@ -71,7 +71,6 @@ async def create_lease(
             detail="Not authorized to create lease for this unit"
         )
     
-    # Check if unit already has an active lease
     existing_active_lease = db.query(Lease).filter(
         Lease.unitId == lease_data.unitId,
         Lease.status == "ACTIVE"

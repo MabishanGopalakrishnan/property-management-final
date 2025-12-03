@@ -1,7 +1,6 @@
 // backend/src/services/paymentService.js
 import prisma from "../prisma/client.js";
 
-// Helper: compute derived status (PENDING / LATE / PAID / FAILED)
 export function computePaymentStatus(payment) {
   if (payment.status === "PAID") return "PAID";
   if (payment.status === "FAILED") return "FAILED";
