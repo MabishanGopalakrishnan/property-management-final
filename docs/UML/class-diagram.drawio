@@ -1,0 +1,186 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" version="29.2.3">
+  <diagram name="Property Management Class Diagram" id="0">
+    <mxGraphModel dx="1281" dy="562" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="4000" pageHeight="3000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="User" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;verticalAlign=top;fontSize=12;fontFamily=Courier New;" value="User&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;----------------------&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ id : int [PK]&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ name : string&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ email : string [UNIQUE]&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ password : string&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ role : LANDLORD | TENANT | ADMIN&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ createdAt : datetime&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ updatedAt : datetime&lt;div style=&quot;padding: 0px; margin: 0px;&quot;&gt;&lt;br style=&quot;padding: 0px; margin: 0px; font-family: Helvetica; font-weight: 700; text-align: center;&quot;&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="180" width="280" x="30" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Tenant" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;verticalAlign=top;fontSize=12;fontFamily=Courier New;" value="Tenant&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;----------------------&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ id : int [PK]&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ phone : string&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ userId : int [UNIQUE, FK → User.id]&lt;div style=&quot;padding: 0px; margin: 0px;&quot;&gt;&lt;br style=&quot;padding: 0px; margin: 0px; font-family: Helvetica; font-weight: 700; text-align: center;&quot;&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="120" width="280" x="480" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="Property" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;verticalAlign=top;fontSize=12;fontFamily=Courier New;" value="Property&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;----------------------&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ id : int [PK]&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ title : string&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ address : string&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ city : string&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ state : string&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ zipCode : string&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ description : string&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ landlordId : int [FK → User.id]&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ createdAt : datetime&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ updatedAt : datetime&lt;div style=&quot;padding: 0px; margin: 0px;&quot;&gt;&lt;br style=&quot;padding: 0px; margin: 0px; font-family: Helvetica; font-weight: 700; text-align: center;&quot;&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="220" width="280" x="30" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="Unit" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;align=left;verticalAlign=top;fontSize=12;fontFamily=Courier New;" value="Unit&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;----------------------&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ id : int [PK]&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ unitNumber : string&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ bedrooms : int&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ bathrooms : int&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ rentAmount : float&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ propertyId : int [FK → Property.id]&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ createdAt : datetime&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ updatedAt : datetime&lt;div style=&quot;padding: 0px; margin: 0px;&quot;&gt;&lt;br style=&quot;padding: 0px; margin: 0px; font-family: Helvetica; font-weight: 700; text-align: center;&quot;&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="200" width="280" x="480" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="Lease" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;verticalAlign=top;fontSize=12;fontFamily=Courier New;" value="Lease&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;----------------------&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ id : int [PK]&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ startDate : datetime&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ endDate : datetime&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ rent : int&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ status : ACTIVE | TERMINATED | EXPIRED&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ tenantId : int [FK → Tenant.id]&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ unitId : int [FK → Unit.id]&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ createdAt : datetime&lt;br style=&quot;padding: 0px; margin: 0px;&quot;&gt;+ updatedAt : datetime&lt;div style=&quot;padding: 0px; margin: 0px;&quot;&gt;&lt;br style=&quot;padding: 0px; margin: 0px; font-family: Helvetica; font-weight: 700; text-align: center;&quot;&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="240" width="280" x="480" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="Payment" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;verticalAlign=top;fontSize=12;fontFamily=Courier New;" value="&lt;div style=&quot;&quot;&gt;&lt;font face=&quot;Helvetica&quot;&gt;Payment&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;font face=&quot;Helvetica&quot;&gt;----------------------&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;font face=&quot;Helvetica&quot;&gt;+ id : int [PK]&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;font face=&quot;Helvetica&quot;&gt;+ amount : float&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;font face=&quot;Helvetica&quot;&gt;+ dueDate : datetime&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;font face=&quot;Helvetica&quot;&gt;+ status : PENDING | PAID | FAILED&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;font face=&quot;Helvetica&quot;&gt;+ paidAt : datetime&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;font face=&quot;Helvetica&quot;&gt;+ stripePaymentIntentId : string&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;font face=&quot;Helvetica&quot;&gt;+ stripeSessionId : string&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;font face=&quot;Helvetica&quot;&gt;+ leaseId : int [FK → Lease.id]&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;font face=&quot;Helvetica&quot;&gt;+ createdAt : datetime&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;font face=&quot;Helvetica&quot;&gt;+ updatedAt : datetime&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="220" width="290" x="1030" y="630" as="geometry" />
+        </mxCell>
+        <mxCell id="MaintenanceRequest" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cdeb8b;strokeColor=#36393d;align=left;verticalAlign=top;fontSize=12;fontFamily=Courier New;" value="&lt;pre&gt;&lt;span style=&quot;font-family: Helvetica; text-align: center;&quot;&gt;MaintenanceRequest&lt;/span&gt;&lt;/pre&gt;&lt;span style=&quot;font-family: Helvetica; text-align: center;&quot;&gt;id : int (PK)&lt;/span&gt;&lt;br style=&quot;padding: 0px; margin: 0px; font-family: Helvetica; text-align: center;&quot;&gt;&lt;span style=&quot;font-family: Helvetica; text-align: center;&quot;&gt;title : string&lt;/span&gt;&lt;br style=&quot;padding: 0px; margin: 0px; font-family: Helvetica; text-align: center;&quot;&gt;&lt;span style=&quot;font-family: Helvetica; text-align: center;&quot;&gt;description : string&lt;/span&gt;&lt;br style=&quot;padding: 0px; margin: 0px; font-family: Helvetica; text-align: center;&quot;&gt;&lt;span style=&quot;font-family: Helvetica; text-align: center;&quot;&gt;status : PENDING | IN_PROGRESS | COMPLETED | CANCELED&lt;/span&gt;&lt;br style=&quot;padding: 0px; margin: 0px; font-family: Helvetica; text-align: center;&quot;&gt;&lt;span style=&quot;font-family: Helvetica; text-align: center;&quot;&gt;priority : LOW | MEDIUM | HIGH&lt;/span&gt;&lt;br style=&quot;padding: 0px; margin: 0px; font-family: Helvetica; text-align: center;&quot;&gt;&lt;span style=&quot;font-family: Helvetica; text-align: center;&quot;&gt;contractor : string&lt;/span&gt;&lt;br style=&quot;padding: 0px; margin: 0px; font-family: Helvetica; text-align: center;&quot;&gt;&lt;span style=&quot;font-family: Helvetica; text-align: center;&quot;&gt;photos : JSON&lt;/span&gt;&lt;br style=&quot;padding: 0px; margin: 0px; font-family: Helvetica; text-align: center;&quot;&gt;&lt;span style=&quot;font-family: Helvetica; text-align: center;&quot;&gt;leaseId : int (FK → Lease.id)&lt;/span&gt;&lt;br style=&quot;padding: 0px; margin: 0px; font-family: Helvetica; text-align: center;&quot;&gt;&lt;span style=&quot;font-family: Helvetica; text-align: center;&quot;&gt;createdAt : datetime&lt;/span&gt;&lt;br style=&quot;padding: 0px; margin: 0px; font-family: Helvetica; text-align: center;&quot;&gt;&lt;span style=&quot;font-family: Helvetica; text-align: center;&quot;&gt;updatedAt : datetime&lt;/span&gt;&lt;br style=&quot;padding: 0px; margin: 0px; font-family: Helvetica; text-align: center;&quot;&gt;&lt;span style=&quot;font-family: Helvetica; text-align: center;&quot;&gt;completedAt : datetime&lt;/span&gt;" vertex="1">
+          <mxGeometry height="260" width="370" x="1010" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_user_property" edge="1" parent="1" source="User" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;strokeWidth=2;" target="Property" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_user_property_label1" connectable="0" parent="rel_user_property" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" value="owns" vertex="1">
+          <mxGeometry relative="1" x="-0.3" y="-1" as="geometry">
+            <mxPoint x="10" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_user_property_label2" connectable="0" parent="rel_user_property" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;" value="0..*" vertex="1">
+          <mxGeometry relative="1" x="0.8" as="geometry">
+            <mxPoint x="-10" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_user_property_label3" connectable="0" parent="rel_user_property" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;" value="1" vertex="1">
+          <mxGeometry relative="1" x="-0.8" as="geometry">
+            <mxPoint x="-10" y="10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_property_unit" edge="1" parent="1" source="Property" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;strokeWidth=2;" target="Unit" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_property_unit_label1" connectable="0" parent="rel_property_unit" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" value="has" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="2" as="geometry">
+            <mxPoint y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_property_unit_label2" connectable="0" parent="rel_property_unit" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;" value="0..*" vertex="1">
+          <mxGeometry relative="1" x="0.75" as="geometry">
+            <mxPoint x="10" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_property_unit_label3" connectable="0" parent="rel_property_unit" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;" value="1" vertex="1">
+          <mxGeometry relative="1" x="-0.75" as="geometry">
+            <mxPoint x="-10" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_tenant_unit" edge="1" parent="1" source="Tenant" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;strokeWidth=2;dashed=1;" target="Unit" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_tenant_unit_label1" connectable="0" parent="rel_tenant_unit" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" value="accesses" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="1" as="geometry">
+            <mxPoint x="20" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_tenant_unit_label2" connectable="0" parent="rel_tenant_unit" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;" value="0..*" vertex="1">
+          <mxGeometry relative="1" x="0.7" as="geometry">
+            <mxPoint x="-10" y="10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_tenant_unit_label3" connectable="0" parent="rel_tenant_unit" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;" value="1..*" vertex="1">
+          <mxGeometry relative="1" x="-0.7" as="geometry">
+            <mxPoint x="10" y="10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_unit_lease" edge="1" parent="1" source="Unit" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;strokeWidth=2;" target="Lease" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_unit_lease_label1" connectable="0" parent="rel_unit_lease" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" value="is leased under" vertex="1">
+          <mxGeometry relative="1" x="-0.3" y="2" as="geometry">
+            <mxPoint x="40" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_unit_lease_label2" connectable="0" parent="rel_unit_lease" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;" value="1..*" vertex="1">
+          <mxGeometry relative="1" x="0.75" as="geometry">
+            <mxPoint x="-10" y="10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_unit_lease_label3" connectable="0" parent="rel_unit_lease" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;" value="1" vertex="1">
+          <mxGeometry relative="1" x="-0.75" as="geometry">
+            <mxPoint x="-10" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_tenant_lease" edge="1" parent="1" source="Tenant" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;strokeWidth=2;" target="Lease" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="620" y="200" />
+              <mxPoint x="800" y="200" />
+              <mxPoint x="800" y="695" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_tenant_lease_label1" connectable="0" parent="rel_tenant_lease" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" value="rents from" vertex="1">
+          <mxGeometry relative="1" x="-0.5" y="1" as="geometry">
+            <mxPoint x="30" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_tenant_lease_label2" connectable="0" parent="rel_tenant_lease" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;" value="1" vertex="1">
+          <mxGeometry relative="1" x="0.85" as="geometry">
+            <mxPoint x="-10" y="10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_tenant_lease_label3" connectable="0" parent="rel_tenant_lease" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;" value="1" vertex="1">
+          <mxGeometry relative="1" x="-0.85" as="geometry">
+            <mxPoint x="10" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_lease_payment" edge="1" parent="1" source="Lease" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;strokeWidth=2;" target="Payment" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="820" y="730" />
+              <mxPoint x="820" y="730" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_lease_payment_label1" connectable="0" parent="rel_lease_payment" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" value="pays for" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="2" as="geometry">
+            <mxPoint y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_lease_payment_label2" connectable="0" parent="rel_lease_payment" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;" value="1..*" vertex="1">
+          <mxGeometry relative="1" x="0.7" as="geometry">
+            <mxPoint x="10" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_lease_payment_label3" connectable="0" parent="rel_lease_payment" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;" value="1" vertex="1">
+          <mxGeometry relative="1" x="-0.7" as="geometry">
+            <mxPoint x="-10" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_unit_maintenance" edge="1" parent="1" source="Unit" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;strokeWidth=2;" target="MaintenanceRequest" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_unit_maintenance_label1" connectable="0" parent="rel_unit_maintenance" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" value="1 maintenance for" vertex="1">
+          <mxGeometry relative="1" x="-0.3" y="1" as="geometry">
+            <mxPoint x="37" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_unit_maintenance_label2" connectable="0" parent="rel_unit_maintenance" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;" value="1..*" vertex="1">
+          <mxGeometry relative="1" x="0.75" as="geometry">
+            <mxPoint x="10" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_unit_maintenance_label3" connectable="0" parent="rel_unit_maintenance" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;" value="1" vertex="1">
+          <mxGeometry relative="1" x="-0.75" as="geometry">
+            <mxPoint x="-10" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_user_tenant" edge="1" parent="1" source="User" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;strokeWidth=2;" target="Tenant" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_user_tenant_label1" connectable="0" parent="rel_user_tenant" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" value="is" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_user_tenant_label2" connectable="0" parent="rel_user_tenant" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;" value="0..1" vertex="1">
+          <mxGeometry relative="1" x="0.7" as="geometry">
+            <mxPoint x="10" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_user_tenant_label3" connectable="0" parent="rel_user_tenant" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;" value="1" vertex="1">
+          <mxGeometry relative="1" x="-0.7" as="geometry">
+            <mxPoint x="-10" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

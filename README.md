@@ -2,9 +2,20 @@
 
 A full-stack property management application for landlords and tenants, built with React, FastAPI, and PostgreSQL.
 
+## 👥 Group Members
+
+- **Mabishan Gopalakrishnan** - 100867283
+- **Naveenan Vigitharan** - 100867059
+
+## 🌐 External APIs Used
+
+- **Google OAuth 2.0** - User authentication and authorization
+- **Google Maps API** - Address autocomplete and property location services
+- **Stripe API** - Payment processing and transaction management
+
 ## 🎉 Test Status
 
-✅ **All 54 tests passing** (100% pass rate)
+✅ **All 54 tests passing** 
 - Authentication & Authorization: 14/14 ✅
 - Dashboard & Statistics: 8/8 ✅
 - Properties Management: 10/10 ✅
@@ -15,10 +26,10 @@ A full-stack property management application for landlords and tenants, built wi
 ## 🚀 Quick Start with Docker
 
 ### Prerequisites
-- [Docker](https://www.docker.com/get-started) installed
-- [Docker Compose](https://docs.docker.com/compose/install/) installed
+- [Docker Desktop](https://www.docker.com/get-started) installed and running
+- [Git](https://git-scm.com/downloads) installed
 
-### Build and Run
+### Step-by-Step Setup
 
 1. **Clone the repository**
 ```bash
@@ -32,46 +43,103 @@ docker-compose up -d --build
 ```
 
 This command will:
-- Build the backend Python/FastAPI container
-- Build the frontend React/Vite container
+- Build the backend (FastAPI + Python) container
+- Build the frontend (React + Vite) container  
 - Start the PostgreSQL database container
-- Set up all necessary networks and volumes
+- Create Docker networks and volumes automatically
+- Takes approximately 1-2 minutes on first run
 
-3. **Access the application**
-- **Frontend**: http://localhost:5173
+**Wait 5-10 seconds** for the database to initialize, then the application will be ready.
+
+3. **Verify containers are running**
+```bash
+docker ps
+```
+
+You should see 3 containers running:
+- `pm-backend-python` (Backend API)
+- `pm-frontend` (React Frontend)
+- `postgres_db` (Database)
+
+4. **Access the application**
+- **Frontend UI**: http://localhost:5173
 - **Backend API**: http://localhost:5000
-- **Database**: localhost:5432
+- **API Documentation**: http://localhost:5000/docs (Swagger UI)
 
-### Stop the Application
+### Managing the Application
+
+**Stop all containers:**
 ```bash
 docker-compose down
 ```
 
-### View Logs
+**Stop and remove all data (fresh start):**
 ```bash
-# All services
+docker-compose down -v
+```
+
+**Restart a specific service:**
+```bash
+docker-compose restart backend
+docker-compose restart frontend
+```
+
+**View container logs:**
+```bash
+# View all logs
 docker-compose logs -f
 
-# Specific service
-docker-compose logs -f backend
-docker-compose logs -f frontend
+# View specific service logs
+docker logs pm-backend-python
+docker logs pm-frontend
+docker logs postgres_db
 ```
 
 ## 🧪 Running Tests
 
-Run the complete test suite:
+Since the application runs in Docker, all tests must be run inside the backend container using `docker exec`.
+
+### Run All Tests
 ```bash
 docker exec pm-backend-python pytest -v
 ```
 
-Run tests with coverage:
+### Run Tests with Coverage Report
 ```bash
-docker exec pm-backend-python pytest -v --cov=app --cov-report=term-missing
+docker exec pm-backend-python pytest --cov=app --cov-report=term-missing
 ```
 
-Run specific test file:
+### Run Specific Test Files
 ```bash
+# Run only authentication tests
 docker exec pm-backend-python pytest tests/test_auth.py -v
+
+# Run only property tests
+docker exec pm-backend-python pytest tests/test_properties.py -v
+
+# Run only payment tests
+docker exec pm-backend-python pytest tests/test_payments.py -v
+```
+
+### Run Tests with Detailed Output
+```bash
+# Show print statements in tests
+docker exec pm-backend-python pytest -v -s
+
+# Show full error tracebacks
+docker exec pm-backend-python pytest -v --tb=long
+```
+
+### Common Test Commands
+```bash
+# Run tests and stop on first failure
+docker exec pm-backend-python pytest -x
+
+# Run tests in parallel (faster)
+docker exec pm-backend-python pytest -n auto
+
+# Run only failed tests from last run
+docker exec pm-backend-python pytest --lf
 ```
 
 ## 📁 Project Structure
@@ -99,17 +167,27 @@ property-management-final/
 └── docker-compose.yml     # Docker orchestration
 ```
 
-## 🔑 Default Credentials
+## 🔑 First Time Setup
 
-For testing purposes, you can register new accounts or use the following:
+### Register a New Account
 
-**Landlord Account:**
-- Email: landlord@test.com
-- Password: password123
+1. Navigate to http://localhost:5173
+2. Click **"Register"**
+3. Fill in the registration form:
+   - Full Name
+   - Email Address
+   - Password (minimum 6 characters)
+   - Role: Select **Landlord** or **Tenant**
+4. Click **"Register"** to create your account
 
-**Tenant Account:**
-- Email: tenant@test.com
-- Password: password123
+### Login
+
+After registration, you'll be redirected to the login page:
+1. Enter your email and password
+2. Click **"Login"**
+3. You'll be redirected to your dashboard
+
+**Note:** The database is fresh on first run, so you'll need to register a new account before using the application.
 
 ## 🛠️ Technology Stack
 
@@ -134,19 +212,20 @@ For testing purposes, you can register new accounts or use the following:
 ## 📝 Features
 
 ### Landlord Features
-- Property management (CRUD)
-- Unit management
-- Tenant management
-- Lease creation and tracking
-- Payment tracking
-- Maintenance request management
-- Dashboard with statistics
+- **Property Management** - Create, update, delete, and view properties with Canadian address format (Province, Postal Code)
+- **Unit Management** - Manage multiple units per property with occupancy tracking
+- **Tenant Management** - Add, view, and manage tenant profiles
+- **Lease Management** - Create and track leases with automatic status updates
+- **Payment Tracking** - Monitor rent payments and payment history
+- **Maintenance Requests** - Receive and manage maintenance requests from tenants
+- **Dashboard Analytics** - View statistics including total properties, occupancy rates, and revenue
 
 ### Tenant Features
-- View lease details
-- Payment history
-- Submit maintenance requests
-- Personal profile management
+- **Lease Information** - View current lease details and terms
+- **Payment History** - Track rent payments and due dates
+- **Maintenance Requests** - Submit and track maintenance issues with photo uploads
+- **Profile Management** - Update personal information and contact details
+- **Tenant Portal** - Dedicated interface for tenant-specific features
 
 ## 🔒 Security Features
 
@@ -164,53 +243,21 @@ Once the backend is running, access the interactive API documentation at:
 
 ## 🏗️ Architecture
 
-For detailed architecture information, see:
-- [System Architecture](docs/architecture/SYSTEM_ARCHITECTURE.md) - Complete system design and data flow
-- [Database ER Diagram](docs/architecture/DATABASE_ER_DIAGRAM.md) - Database schema and relationships
-- [Class Diagram](docs/architecture/CLASS_DIAGRAM.md) - Backend and frontend class structure
-
-### High-Level Architecture
-```
-┌─────────────┐
-│   React     │ ──HTTP/REST──► ┌─────────────┐
-│  Frontend   │                │   FastAPI   │
-│  (Port 5173)│ ◄────JSON────  │   Backend   │
-└─────────────┘                │  (Port 5000)│
-                               └──────┬──────┘
-                                      │
-                                      │ SQLAlchemy
-                                      ▼
-                               ┌─────────────┐
-                               │ PostgreSQL  │
-                               │  Database   │
-                               │  (Port 5432)│
-                               └─────────────┘
-```
 
 **External Integrations:**
 - Google OAuth 2.0 (Authentication)
+- Google Maps API (Address Autocomplete)
 - Stripe API (Payment Processing)
-- Google Maps API (Property Locations)
 
-## 📸 Screenshots
+### UML Class Diagram
 
-### Dashboard
-![Dashboard](docs/screenshots/dashboard.png)
-*Landlord dashboard showing properties, occupancy rates, and revenue statistics*
+![UML Class Diagram](docs/UML/class-diagram.png)
 
-### Property Management
-![Properties](docs/screenshots/properties.png)
-*Property management interface with CRUD operations*
-
-### Lease Management
-![Leases](docs/screenshots/leases.png)
-*Lease tracking with status indicators and validation*
-
-### Payment Processing
-![Payments](docs/screenshots/payments.png)
-*Payment history with Stripe integration*
-
-> **Note:** Screenshots can be added to the `docs/screenshots/` folder to showcase the application interface.
+The class diagram shows the complete object-oriented structure including:
+- **7 Core Classes**: User, Tenant, Property, Unit, Lease, Payment, MaintenanceRequest
+- **Relationships**: One-to-Many, Many-to-Many associations
+- **Cardinality**: 0..1, 1, 0..*, 1..*
+- **Attributes**: All fields with data types and constraints [PK], [FK], [UNIQUE]
 
 ## 🤝 Contributing
 

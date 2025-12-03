@@ -1,0 +1,151 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Property Management Package Diagram">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" arrows="1" fold="1">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Client Layer Package -->
+        <mxCell id="ClientLayer" value="&lt;&lt;package&gt;&gt;\nClient Layer\n━━━━━━━━━━━━━━━━━━━━━━\nReact Frontend\nPort: 5173" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="1200" height="280" as="geometry" />
+        </mxCell>
+
+        <!-- Pages Package -->
+        <mxCell id="PagesPackage" value="&lt;&lt;package&gt;&gt;\nPages\n━━━━━━━━━━━━━\n+ Dashboard\n+ Properties\n+ Leases\n+ Tenants\n+ Payments\n+ Maintenance\n+ Login/Register" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="80" y="120" width="200" height="170" as="geometry" />
+        </mxCell>
+
+        <!-- Components Package -->
+        <mxCell id="ComponentsPackage" value="&lt;&lt;package&gt;&gt;\nComponents\n━━━━━━━━━━━━━\n+ Navbar\n+ Sidebar\n+ Logo\n+ AddressAutocomplete\n+ Layout Components" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="320" y="120" width="200" height="170" as="geometry" />
+        </mxCell>
+
+        <!-- Context Package -->
+        <mxCell id="ContextPackage" value="&lt;&lt;package&gt;&gt;\nContext\n━━━━━━━━━━━━━\n+ AuthContext\n+ State Management" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="560" y="120" width="200" height="170" as="geometry" />
+        </mxCell>
+
+        <!-- API Client Package -->
+        <mxCell id="APIClientPackage" value="&lt;&lt;package&gt;&gt;\nAPI Client\n━━━━━━━━━━━━━\n+ auth.js\n+ properties.js\n+ leases.js\n+ payments.js\n+ tenants.js\n+ maintenance.js\n+ axiosConfig.js" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="800" y="120" width="200" height="170" as="geometry" />
+        </mxCell>
+
+        <!-- Services Package -->
+        <mxCell id="ServicesPackage" value="&lt;&lt;package&gt;&gt;\nServices\n━━━━━━━━━━━━━\n+ leaseService\n+ paymentService\n+ tenantPortalService" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="120" width="180" height="170" as="geometry" />
+        </mxCell>
+
+        <!-- Application Layer Package -->
+        <mxCell id="ApplicationLayer" value="&lt;&lt;package&gt;&gt;\nApplication Layer\n━━━━━━━━━━━━━━━━━━━━━━\nFastAPI Backend\nPort: 5000" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="380" width="1200" height="280" as="geometry" />
+        </mxCell>
+
+        <!-- Routers Package -->
+        <mxCell id="RoutersPackage" value="&lt;&lt;package&gt;&gt;\nRouters (Controllers)\n━━━━━━━━━━━━━\n+ auth.py\n+ properties.py\n+ leases.py\n+ tenants.py\n+ payments.py\n+ maintenance.py\n+ dashboard.py\n+ tenant_portal.py" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="80" y="460" width="200" height="170" as="geometry" />
+        </mxCell>
+
+        <!-- Models Package -->
+        <mxCell id="ModelsPackage" value="&lt;&lt;package&gt;&gt;\nModels\n━━━━━━━━━━━━━\n+ User\n+ Property\n+ Unit\n+ Lease\n+ Payment\n+ Tenant\n+ MaintenanceRequest" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="320" y="460" width="200" height="170" as="geometry" />
+        </mxCell>
+
+        <!-- Schemas Package -->
+        <mxCell id="SchemasPackage" value="&lt;&lt;package&gt;&gt;\nSchemas (Validation)\n━━━━━━━━━━━━━\n+ PropertyBase\n+ LeaseCreate\n+ PaymentUpdate\n+ UserCreate\n+ Pydantic Models" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="560" y="460" width="200" height="170" as="geometry" />
+        </mxCell>
+
+        <!-- Auth Package -->
+        <mxCell id="AuthPackage" value="&lt;&lt;package&gt;&gt;\nAuth\n━━━━━━━━━━━━━\n+ JWT Token\n+ Password Hashing\n+ get_current_user()\n+ Role Verification" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="800" y="460" width="200" height="170" as="geometry" />
+        </mxCell>
+
+        <!-- Database Connection Package -->
+        <mxCell id="DatabaseConnPackage" value="&lt;&lt;package&gt;&gt;\nDatabase\n━━━━━━━━━━━━━\n+ SessionLocal\n+ engine\n+ get_db()\n+ Base" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="460" width="180" height="170" as="geometry" />
+        </mxCell>
+
+        <!-- Data Layer Package -->
+        <mxCell id="DataLayer" value="&lt;&lt;package&gt;&gt;\nData Layer\n━━━━━━━━━━━━━━━━━━━━━━\nPostgreSQL Database\nPort: 5432" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#f8cecc;strokeColor=#b85450;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="720" width="1200" height="180" as="geometry" />
+        </mxCell>
+
+        <!-- Database Tables Package -->
+        <mxCell id="TablesPackage" value="&lt;&lt;package&gt;&gt;\nDatabase Tables\n━━━━━━━━━━━━━\n+ User\n+ Property\n+ Unit\n+ Lease\n+ Payment\n+ Tenant\n+ MaintenanceRequest" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="520" y="780" width="240" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- External APIs Package -->
+        <mxCell id="ExternalAPIs" value="&lt;&lt;package&gt;&gt;\nExternal APIs\n━━━━━━━━━━━━━━━━━━━━━━" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#f5f5f5;strokeColor=#666666;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="380" width="280" height="280" as="geometry" />
+        </mxCell>
+
+        <!-- Google OAuth Package -->
+        <mxCell id="GoogleOAuthPackage" value="&lt;&lt;external&gt;&gt;\nGoogle OAuth 2.0\n━━━━━━━━━━━━━\nAuthentication" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#cdeb8b;strokeColor=#36393d;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1340" y="450" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Google Maps Package -->
+        <mxCell id="GoogleMapsPackage" value="&lt;&lt;external&gt;&gt;\nGoogle Maps API\n━━━━━━━━━━━━━\nAddress Autocomplete" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#cdeb8b;strokeColor=#36393d;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1340" y="530" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Stripe Package -->
+        <mxCell id="StripePackage" value="&lt;&lt;external&gt;&gt;\nStripe API\n━━━━━━━━━━━━━\nPayment Processing" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=#cdeb8b;strokeColor=#36393d;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1340" y="610" width="200" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Dependencies -->
+        <!-- Client to Application -->
+        <mxCell id="dep1" value="&lt;&lt;uses&gt;&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=open;endFill=0;strokeWidth=2;" edge="1" source="APIClientPackage" target="ApplicationLayer" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Application to Data -->
+        <mxCell id="dep2" value="&lt;&lt;uses&gt;&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=open;endFill=0;strokeWidth=2;" edge="1" source="DatabaseConnPackage" target="DataLayer" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Application to External APIs -->
+        <mxCell id="dep3" value="&lt;&lt;uses&gt;&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=open;endFill=0;strokeWidth=2;" edge="1" source="AuthPackage" target="GoogleOAuthPackage" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dep4" value="&lt;&lt;uses&gt;&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=open;endFill=0;strokeWidth=2;" edge="1" source="APIClientPackage" target="GoogleMapsPackage" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dep5" value="&lt;&lt;uses&gt;&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=open;endFill=0;strokeWidth=2;" edge="1" source="RoutersPackage" target="StripePackage" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Internal Backend Dependencies -->
+        <mxCell id="dep6" value="&lt;&lt;uses&gt;&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=open;endFill=0;" edge="1" source="RoutersPackage" target="ModelsPackage" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dep7" value="&lt;&lt;uses&gt;&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=open;endFill=0;" edge="1" source="RoutersPackage" target="SchemasPackage" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dep8" value="&lt;&lt;uses&gt;&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=open;endFill=0;" edge="1" source="RoutersPackage" target="AuthPackage" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Frontend Internal Dependencies -->
+        <mxCell id="dep9" value="&lt;&lt;uses&gt;&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=open;endFill=0;" edge="1" source="PagesPackage" target="ComponentsPackage" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dep10" value="&lt;&lt;uses&gt;&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=open;endFill=0;" edge="1" source="PagesPackage" target="APIClientPackage" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dep11" value="&lt;&lt;uses&gt;&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=open;endFill=0;" edge="1" source="PagesPackage" target="ContextPackage" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
