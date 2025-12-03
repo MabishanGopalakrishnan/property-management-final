@@ -37,7 +37,7 @@ A full-stack property management application for landlords and tenants, built wi
 
 ⚠️ **Environment configuration is required for the application to run.**
 
-**For Instructors/Graders:**
+**For Instructors/Graders:(if it doesn't appear)**
 
 The `.env.example` file in `backend-python/` contains all necessary configuration. Simply rename it:
 
