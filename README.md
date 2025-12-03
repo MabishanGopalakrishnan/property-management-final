@@ -35,12 +35,82 @@ A full-stack property management application for landlords and tenants, built wi
 
 ### Important: Environment Variables
 
-⚠️ **The `.env` file with API keys is required but not included in the repository for security reasons.**
+⚠️ **Environment configuration is required for the application to run.**
 
 **For Instructors/Graders:**
-- The complete `.env` file with all API keys (Stripe, Google OAuth) will be provided separately via submission or email
-- Copy the provided `.env` file to `backend-python/.env` before running Docker commands
-- A template `.env.example` is included in `backend-python/` for reference
+
+The `.env.example` file in `backend-python/` contains all necessary configuration. Simply rename it:
+
+```bash
+# On Windows
+copy backend-python\.env.example backend-python\.env
+
+# On Mac/Linux
+cp backend-python/.env.example backend-python/.env
+```
+
+Or create `backend-python/.env` and paste the following configuration:
+
+```env
+# -------------------------
+# DATABASE CONFIG
+# -------------------------
+DATABASE_URL=postgresql://property_user:property_pass@postgres_db:5432/property_management
+
+# -------------------------
+# JWT CONFIG
+# -------------------------
+JWT_SECRET=MabiNav0719
+JWT_ALGORITHM=HS256
+JWT_EXPIRATION_MINUTES=1440
+
+# -------------------------
+# STRIPE CONFIG
+# -------------------------
+STRIPE_PUBLISHABLE_KEY=pk_test_51SVLEO3rHrUQ11GUGB0bQR9ZOKidTMIHj79OaaOHXzOvaxso5s2HINmbaurwBEiHo5f01AXkAYUnJlo6pMJt8eBs00JOV7Hyuf
+STRIPE_SECRET_KEY=sk_test_51SVLEO3rHrUQ11GUR64hR6gQVe5ZBPBKxLyYyCQj72qWPMT6ysJxgaDlRYoFBo8anY0UNNDkl7bBzlB8fZF2FEpg00fqP9IZGv
+STRIPE_WEBHOOK_SECRET=whsec_d195e0d4921d0251f95beed67bc6a6a1218e964eb2e077af04fff61bf2518b00
+
+# -------------------------
+# GOOGLE AUTH CONFIG
+# -------------------------
+GOOGLE_CLIENT_ID=595357260328-bgtuhfcdt7is5asi5fkikg8cndhmflbo.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=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
+
+# -------------------------
+# EMAIL / SMTP CONFIG
+# -------------------------
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASSWORD=your-app-password
+
+# -------------------------
+# FRONTEND URL
+# -------------------------
+FRONTEND_URL=http://localhost:5173
+```
+
+**Steps:**
+1. Create file: `backend-python/.env`
+2. Copy the configuration above into the file
+3. Save the file
+
+**Frontend Environment:**
+
+Create a file named `.env` in the `frontend/` directory and paste the following configuration:
+
+```env
+VITE_API_URL="http://localhost:5000/api"
+VITE_GOOGLE_CLIENT_ID="595357260328-bgtuhfcdt7is5asi5fkikg8cndhmflbo.apps.googleusercontent.com"
+VITE_GOOGLE_MAPS_API_KEY="AIzaSyAcTI-miNUASkejUwJr1TJcdDq-_aSLTCs"
+```
+
+**Steps:**
+1. Create file: `frontend/.env`
+2. Copy the configuration above into the file
+3. Save the file
+4. Run `docker-compose up -d --build`
 
 ### Step-by-Step Setup
 
