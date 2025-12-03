@@ -2,6 +2,10 @@
 
 A full-stack property management application for landlords and tenants, built with React, FastAPI, and PostgreSQL.
 
+## 🎥 Presentation Video
+
+**Watch our project presentation:** [https://youtu.be/lcoxETZLjfA](https://youtu.be/lcoxETZLjfA)
+
 ## 👥 Group Members
 
 - **Mabishan Gopalakrishnan** - 100867283
@@ -28,6 +32,15 @@ A full-stack property management application for landlords and tenants, built wi
 ### Prerequisites
 - [Docker Desktop](https://www.docker.com/get-started) installed and running
 - [Git](https://git-scm.com/downloads) installed
+
+### Important: Environment Variables
+
+⚠️ **The `.env` file with API keys is required but not included in the repository for security reasons.**
+
+**For Instructors/Graders:**
+- The complete `.env` file with all API keys (Stripe, Google OAuth) will be provided separately via submission or email
+- Copy the provided `.env` file to `backend-python/.env` before running Docker commands
+- A template `.env.example` is included in `backend-python/` for reference
 
 ### Step-by-Step Setup
 
@@ -188,6 +201,50 @@ After registration, you'll be redirected to the login page:
 3. You'll be redirected to your dashboard
 
 **Note:** The database is fresh on first run, so you'll need to register a new account before using the application.
+
+## 💳 Testing Payments with Stripe
+
+The application uses **Stripe** for payment processing in test mode. You can test the payment functionality using Stripe's test card numbers.
+
+### Making a Test Payment
+
+1. **Login as a Tenant** (or register a new tenant account)
+2. Navigate to **Payments** section in the tenant portal
+3. Click **"Pay with Stripe"** on any pending payment
+4. You'll be redirected to Stripe's secure checkout page
+
+### Test Card Information
+
+Use the following test card details to simulate successful payments:
+
+**Card Number:** `4242 4242 4242 4242`
+
+**Expiration Date:** Any future date (e.g., `12/34`)
+
+**CVC:** Any 3 digits (e.g., `123`)
+
+**ZIP Code:** Any 5 digits (e.g., `12345`)
+
+### What Happens After Payment
+
+1. After entering the test card details, click **"Pay"**
+2. Stripe will process the test payment
+3. You'll be redirected back to the application
+4. You'll see a success message: **"Payment completed successfully! 🎉"**
+5. The payment status will automatically update to **"PAID"**
+6. The payment will be visible in both:
+   - **Tenant Portal** - Your payment history
+   - **Landlord Portal** - Property payment records
+
+### Additional Test Cards
+
+Stripe provides other test cards for different scenarios:
+
+- **Declined Payment:** `4000 0000 0000 0002`
+- **Insufficient Funds:** `4000 0000 0000 9995`
+- **Expired Card:** `4000 0000 0000 0069`
+
+For more test cards, visit: [Stripe Testing Documentation](https://stripe.com/docs/testing)
 
 ## 🛠️ Technology Stack
 

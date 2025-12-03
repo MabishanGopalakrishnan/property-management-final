@@ -1,10 +1,12 @@
 // src/pages/tenant/TenantPayments.jsx
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 import { getTenantPayments } from "../../api/tenantPortal";
 import { createPaymentCheckout, verifyPayment } from "../../api/payments";
 
 export default function TenantPayments() {
+  const { user } = useAuth();
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [payingId, setPayingId] = useState(null);
@@ -13,42 +15,57 @@ export default function TenantPayments() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
-    const success = searchParams.get("success");
+    const verified = searchParams.get("verified");
     const canceled = searchParams.get("canceled");
+    const success = searchParams.get("success");
     const paymentId = searchParams.get("payment_id");
     const sessionId = searchParams.get("session_id");
     
-    if (success === "true" && paymentId && sessionId) {
-      // Verify payment with backend
+    // Handle new callback flow
+    if (verified === "true") {
+      setSuccessMessage("Payment completed successfully! 🎉");
+      setSearchParams({});
+    } 
+    // Handle old direct Stripe redirects (for backwards compatibility)
+    else if (success === "true" && paymentId && sessionId) {
       verifyPayment(paymentId, sessionId)
         .then(() => {
           setSuccessMessage("Payment completed successfully! 🎉");
-          // Remove query params
           setSearchParams({});
-          // Refresh payments list
-          return getTenantPayments();
+          // Reload payments after successful verification
+          if (user && user.role === "TENANT") {
+            return getTenantPayments();
+          }
         })
-        .then((data) => setPayments(Array.isArray(data) ? data : []))
+        .then((data) => {
+          if (data) {
+            setPayments(Array.isArray(data) ? data : []);
+          }
+        })
         .catch((err) => {
           setError("Payment verification failed. Please contact support.");
           setSearchParams({});
+        })
+        .finally(() => {
+          setLoading(false);
         });
-    } else if (success === "true") {
-      setSuccessMessage("Payment completed successfully! 🎉");
-      setSearchParams({});
-    } else if (canceled === "true") {
+      return; // Exit early, don't load payments again below
+    } 
+    else if (canceled === "true") {
       setError("Payment was canceled. You can try again.");
       setSearchParams({});
     }
 
-    // Load payments initially
-    if (!paymentId || !sessionId) {
+    // Only load payments if user is authenticated as tenant
+    if (user && user.role === "TENANT") {
       getTenantPayments()
         .then((data) => setPayments(Array.isArray(data) ? data : []))
         .catch((err) => setError("Failed to load payments"))
         .finally(() => setLoading(false));
+    } else {
+      setLoading(false);
     }
-  }, [searchParams, setSearchParams]);
+  }, [user]);
 
   const handlePayWithStripe = async (paymentId) => {
     setPayingId(paymentId);
@@ -82,13 +99,25 @@ export default function TenantPayments() {
 
       {successMessage && (
         <div className="tenant-card" style={{ padding: "1rem", color: "#2e7d32", backgroundColor: "#e8f5e9", borderLeft: "4px solid #2e7d32", marginBottom: "1rem" }}>
-          {successMessage}
+          <p>{successMessage}</p>
+          {(!user || user.role !== "TENANT") && (
+            <p style={{ marginTop: "0.5rem" }}>
+              Please <a href="/login" style={{ color: "#1976d2", textDecoration: "underline" }}>log in as a tenant</a> to view your payments.
+            </p>
+          )}
         </div>
       )}
 
       {error && (
         <div className="tenant-card" style={{ padding: "1rem", color: "#d32f2f", backgroundColor: "#ffebee", borderLeft: "4px solid #d32f2f", marginBottom: "1rem" }}>
           {error}
+        </div>
+      )}
+
+      {(!user || user.role !== "TENANT") && !successMessage && !error && (
+        <div className="tenant-card" style={{ padding: "2rem", textAlign: "center" }}>
+          <p>Please log in as a tenant to view payments.</p>
+          <a href="/login" style={{ color: "#1976d2", textDecoration: "underline" }}>Go to Login</a>
         </div>
       )}
 

@@ -340,3 +340,80 @@ async def get_recent_activity(
     # Sort all activities by timestamp and return top 10
     activities.sort(key=lambda x: x["timestamp"], reverse=True)
     return activities[:10]
+
+
+@router.get("/tenant-alerts")
+async def get_tenant_alerts(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Get alerts and notifications for tenant"""
+    from datetime import datetime, timedelta
+    
+    # Get tenant record
+    tenant = db.query(Tenant).filter(Tenant.userId == current_user.id).first()
+    
+    if not tenant:
+        return []
+    
+    alerts = []
+    
+    # Get upcoming payments (due within 7 days)
+    upcoming_deadline = datetime.utcnow() + timedelta(days=7)
+    upcoming_payments = db.query(Payment).join(Lease).filter(
+        Lease.tenantId == tenant.id,
+        Payment.status == "PENDING",
+        Payment.dueDate <= upcoming_deadline,
+        Payment.dueDate >= datetime.utcnow()
+    ).all()
+    
+    # Get overdue payments
+    overdue_payments = db.query(Payment).join(Lease).filter(
+        Lease.tenantId == tenant.id,
+        Payment.status == "PENDING",
+        Payment.dueDate < datetime.utcnow()
+    ).all()
+    
+    # Get maintenance requests with updates
+    recent_maintenance_updates = db.query(MaintenanceRequest).join(Lease).filter(
+        Lease.tenantId == tenant.id,
+        MaintenanceRequest.status.in_(["IN_PROGRESS", "COMPLETED"])
+    ).order_by(MaintenanceRequest.updatedAt.desc()).limit(3).all()
+    
+    # Add overdue payment alerts (highest priority)
+    for payment in overdue_payments:
+        days_overdue = (datetime.utcnow() - payment.dueDate).days
+        alerts.append({
+            "type": "urgent",
+            "severity": "high",
+            "message": f"Payment of ${payment.amount} is {days_overdue} day{'s' if days_overdue != 1 else ''} overdue",
+            "date": payment.dueDate.isoformat(),
+            "link": "/tenant/payments",
+            "id": payment.id
+        })
+    
+    # Add upcoming payment alerts
+    for payment in upcoming_payments:
+        days_until = (payment.dueDate - datetime.utcnow()).days
+        alerts.append({
+            "type": "warning",
+            "severity": "medium",
+            "message": f"Payment of ${payment.amount} due in {days_until} day{'s' if days_until != 1 else ''}",
+            "date": payment.dueDate.isoformat(),
+            "link": "/tenant/payments",
+            "id": payment.id
+        })
+    
+    # Add maintenance update alerts
+    for maintenance in recent_maintenance_updates:
+        status_msg = "completed" if maintenance.status == "COMPLETED" else "in progress"
+        alerts.append({
+            "type": "info",
+            "severity": "low",
+            "message": f"Maintenance request '{maintenance.title}' is now {status_msg}",
+            "date": maintenance.updatedAt.isoformat(),
+            "link": "/tenant/maintenance",
+            "id": maintenance.id
+        })
+    
+    return alerts

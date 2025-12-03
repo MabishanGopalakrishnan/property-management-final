@@ -1,7 +1,7 @@
 # Node
 node_modules/
 
-# Env
+# Env files (keep .env private, use .env.example for template)
 .env
 .env.local
 

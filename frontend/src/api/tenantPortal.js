@@ -60,10 +60,18 @@ export const getTenantOverview = async () => {
       getTenantMaintenance()
     ]);
     
+    // Get the active lease (or first lease if no active lease)
+    const activeLease = leases.find(l => l.status === "ACTIVE") || leases[0];
+    
+    // Extract tenant info from the lease
+    const tenant = activeLease?.tenant || null;
+    
     return {
-      leases,
+      lease: activeLease, // Single lease object, not array
+      leases: leases,     // Keep full array for other uses
       payments,
-      maintenance
+      maintenance,
+      tenant
     };
   } catch (error) {
     console.error('Error fetching tenant overview:', error);

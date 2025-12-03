@@ -1,5 +1,5 @@
 // src/App.jsx
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "./context/AuthContext.jsx";
 
 /* Landlord pages */
@@ -48,14 +48,64 @@ function PrivateRoute({ children }) {
 /* TENANT PROTECTED ROUTE */
 function TenantRoute({ children }) {
   const { user, loading } = useAuth();
+  const location = useLocation();
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) {
+    return (
+      <div className="center-page">
+        <div className="loader" />
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
   if (!user || user.role !== "TENANT") {
+    console.log("TenantRoute: No user or not tenant", { user, path: location.pathname });
     return <Navigate to="/login" replace />;
   }
 
   return children;
+}
+
+/* SPECIAL HANDLER FOR STRIPE PAYMENT CALLBACK */
+function TenantPaymentsRoute() {
+  const { user, loading } = useAuth();
+  const location = useLocation();
+
+  // Check if this is a Stripe redirect
+  const isStripeRedirect = location.search.includes('success=true') && 
+                           location.search.includes('payment_id') && 
+                           location.search.includes('session_id');
+
+  if (loading) {
+    return (
+      <div className="center-page">
+        <div className="loader" />
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  // If Stripe redirect, allow access without tenant check
+  if (isStripeRedirect) {
+    console.log("Allowing Stripe redirect through");
+    return (
+      <TenantLayout>
+        <TenantPayments />
+      </TenantLayout>
+    );
+  }
+
+  // Otherwise, normal tenant check
+  if (!user || user.role !== "TENANT") {
+    return <Navigate to="/login" replace />;
+  }
+
+  return (
+    <TenantLayout>
+      <TenantPayments />
+    </TenantLayout>
+  );
 }
 
 export default function App() {
@@ -186,13 +236,7 @@ export default function App() {
 
       <Route
         path="/tenant/payments"
-        element={
-          <TenantRoute>
-            <TenantLayout>
-              <TenantPayments />
-            </TenantLayout>
-          </TenantRoute>
-        }
+        element={<TenantPaymentsRoute />}
       />
 
       <Route
